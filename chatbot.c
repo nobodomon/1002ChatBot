@@ -44,6 +44,12 @@
 #include <string.h>
 #include "chat1002.h"
 
+#include <iostream>
+#include <random>
+#include <vector>
+#include <ctime>
+#include <stdlib.h>
+#include <time.h>
 
 /*
  * Get the name of the chatbot.
@@ -192,7 +198,7 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_question(const char *intent) {
 
-	/* to be implemented */
+	return compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0;
 
 	return 0;
 
@@ -233,7 +239,7 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_reset(const char *intent) {
 
-	/* to be implemented */
+	return compare_token(intent, "reset") == 0;
 
 	return 0;
 
@@ -270,7 +276,7 @@ int chatbot_do_reset(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_save(const char *intent) {
 
-	/* to be implemented */
+	return compare_token(intent, "save") == 0;
 
 	return 0;
 
@@ -308,7 +314,15 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
  */
 int chatbot_is_smalltalk(const char *intent) {
 
-	/* to be implemented */
+	const char* smalltalk[] = { "hi", "hello", "hey", "how are you?", "how's everything?", "how's it going?", "are you human?", "are you a robot?", "what is your name?", "who are you?" , "tell me something" , "what day is it today?" , "what is the current time?" , "what is the date today?"};
+
+	for (int i = 0; i < 14; i++) 
+	{
+		if (compare_token(intent, smalltalk[i]) == 0) 
+		{
+			return 1;
+		}
+	}
 
 	return 0;
 
@@ -327,7 +341,93 @@ int chatbot_is_smalltalk(const char *intent) {
  */
 int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 
-	/* to be implemented */
+	std::vector <string> greetings_vector{ "Hi!", "Hello!", "Hey~", "Hey there!", "Greetings", "Welcome!", "What's up?", "Howdy!", "Hi-ya~"};
+	std::vector <string> how_response_vector{ "I'm good, thanks.", "Great!", "Great great, thanks.", "I'm doing well.", "Fine, thanks."};
+	std::vector <string> how_question_vector{ "And you?", "How are you?", "How's everything?", "How's it going?"};
+
+	string random_greetings = greetings_vector[rand() % greetings_vector.size()];
+	string random_how_response = how_response_vector[rand() % how_response_vector.size()];
+	string random_how_question = how_question_vector[rand() % how_question_vector.size()];
+
+	std::vector <string> joke_vector{ "I can’t believe I got fired from the calendar factory. All I did was take a day off!", "Never trust atoms; they make up everything.", "I was wondering why the frisbee kept getting bigger and bigger, but then it hit me.", "I just got kicked out of a secret cooking society. I spilled the beans." };
+	std::vector <string> fun_fact_vector{ "A shrimp's heart is in its head.", "Like fingerprints, everyone's tongue print is different.", "Almonds are a member of the peach family.", "A shark is the only known fish that can blink with both eyes." };
+	std::vector <string> something_cool_vector{ "McDonald’s once made bubblegum-flavored broccoli.", "The first oranges weren’t orange.", "Bananas grow upside-down.", "Movie trailers originally played after the movie" };
+	
+	string random_joke = joke_vector[rand() % joke_vector.size()];
+	string random_fun_fact = fun_fact_vector[rand() % fun_fact_vector.size()];
+	string random_something_cool = something_cool_vector[rand() % something_cool_vector.size()];
+
+	const std::string currentDateTime()
+	{
+		time_t     now = time(0);
+		struct tm  tstruct;
+		char       buf[80];
+		tstruct = *localtime(&now);
+		strftime(buf, sizeof(buf), "Today's Date:%Y-%m-%d Current Time:%X", &tstruct);
+
+		return buf;
+	}
+
+	if (compare_token("hi", inv[0]) == 0 || compare_token("hello", inv[0]) == 0 || compare_token("hey", inv[0]) == 0) 
+	{
+		std::cout << random_greetings << "\n";
+	}
+	else if (compare_token("how are you?", inv[0]) == 0 || compare_token("how's everything?", inv[0]) == 0 || compare_token("how's it going?", inv[0]) == 0)
+	{
+		std::cout << random_how_response << "\n";
+		std::cout << random_how_question << "\n";
+	}
+	else if (compare_token("are you human?", inv[0]) == 0 || compare_token("are you a robot?", inv[0]) == 0)
+	{
+		snprintf(response, n, "I am a robot. Are you a robot?");
+	}
+	else if (compare_token("what is your name?", inv[0]) == 0 || compare_token("who are you?", inv[0]) == 0)
+	{
+		snprintf(response, n, "I am chatty the chatbot.");
+	}
+	else if (compare_token("tell me something", inv[0]) == 0)
+	{
+		std::cout << "What do you want to know?\n";
+		std::cout << "[1] Tell me a joke\n"
+			<< "[2] Tell me a fun fact\n"
+			<< "[3] Tell me something cool\n"
+			<< "[4] Exit\n";
+
+		std::string input;
+		std::getline(std::cin, input);
+
+		while (input != "1" && input != "2" && input != "3" && input != "4") {
+			std::cout << "Invalid!\n\n";
+
+			std::cout << "What do you want to know?\n";
+			std::cout << "[1] Tell me a joke\n"
+				<< "[2] Tell me a fun fact\n"
+				<< "[3] Tell me something cool\n"
+				<< "[4] Exit\n";
+			std::getline(std::cin, input);
+		}
+
+		if (input == "1") 
+		{
+			std::cout << random_joke << "\n";
+		}
+		else if (input == "2") 
+		{
+			std::cout << random_fun_fact << "\n";
+		}
+		else if (input == "3")
+		{
+			std::cout << random_something_cool << "\n";
+		}
+		else if (input == "4")
+		{
+			return 0;
+		}
+	}
+	else if (compare_token("what day is it today?", inv[0]) == 0 || compare_token("what is the current time?", inv[0]) == 0 || compare_token("what is the date today?", inv[0]) == 0)
+	{
+		std::cout << currentDateTime() << std::endl;
+	}
 
 	return 0;
 
