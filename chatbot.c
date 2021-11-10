@@ -44,9 +44,6 @@
 #include <string.h>
 #include "chat1002.h"
 
-#include <iostream>
-#include <random>
-#include <vector>
 #include <ctime>
 #include <stdlib.h>
 #include <time.h>
@@ -341,23 +338,34 @@ int chatbot_is_smalltalk(const char *intent) {
  */
 int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 
-	std::vector <string> greetings_vector{ "Hi!", "Hello!", "Hey~", "Hey there!", "Greetings", "Welcome!", "What's up?", "Howdy!", "Hi-ya~"};
-	std::vector <string> how_response_vector{ "I'm good, thanks.", "Great!", "Great great, thanks.", "I'm doing well.", "Fine, thanks."};
-	std::vector <string> how_question_vector{ "And you?", "How are you?", "How's everything?", "How's it going?"};
+	const char* greetings[] = {"Hi!", "Hello!", "Hey~", "Hey there!", "Greetings", "Welcome!", "What's up?", "Howdy!", "Hi-ya~"};
+	const char* how_response[] = {"I'm good, thanks.", "Great!", "Great great, thanks.", "I'm doing well.", "Fine, thanks."};
+	const char* how_question[] = {"And you?", "How are you?", "How's everything?", "How's it going?"};
 
-	string random_greetings = greetings_vector[rand() % greetings_vector.size()];
-	string random_how_response = how_response_vector[rand() % how_response_vector.size()];
-	string random_how_question = how_question_vector[rand() % how_question_vector.size()];
+	const char* joke[] = { "I can’t believe I got fired from the calendar factory. All I did was take a day off!", "Never trust atoms; they make up everything.", "I was wondering why the frisbee kept getting bigger and bigger, but then it hit me.", "I just got kicked out of a secret cooking society. I spilled the beans." };
+	const char* fun_fact[] = { "A shrimp's heart is in its head.", "Like fingerprints, everyone's tongue print is different.", "Almonds are a member of the peach family.", "A shark is the only known fish that can blink with both eyes." };
+	const char* something_cool[] = { "McDonald’s once made bubblegum-flavored broccoli.", "The first oranges weren’t orange.", "Bananas grow upside-down.", "Movie trailers originally played after the movie" };
 
-	std::vector <string> joke_vector{ "I can’t believe I got fired from the calendar factory. All I did was take a day off!", "Never trust atoms; they make up everything.", "I was wondering why the frisbee kept getting bigger and bigger, but then it hit me.", "I just got kicked out of a secret cooking society. I spilled the beans." };
-	std::vector <string> fun_fact_vector{ "A shrimp's heart is in its head.", "Like fingerprints, everyone's tongue print is different.", "Almonds are a member of the peach family.", "A shark is the only known fish that can blink with both eyes." };
-	std::vector <string> something_cool_vector{ "McDonald’s once made bubblegum-flavored broccoli.", "The first oranges weren’t orange.", "Bananas grow upside-down.", "Movie trailers originally played after the movie" };
-	
-	string random_joke = joke_vector[rand() % joke_vector.size()];
-	string random_fun_fact = fun_fact_vector[rand() % fun_fact_vector.size()];
-	string random_something_cool = something_cool_vector[rand() % something_cool_vector.size()];
+	const size_t greetings_count = sizeof(greetings) / sizeof(greetings[0]);
+	const size_t how_response_count = sizeof(how_response) / sizeof(how_response[0]);
+	const size_t how_question_count = sizeof(how_question) / sizeof(how_question[0]);
 
-	const std::string currentDateTime()
+	const size_t joke_count = sizeof(joke) / sizeof(joke[0]);
+	const size_t fun_fact_count = sizeof(how_response) / sizeof(how_response[0]);
+	const size_t something_cool_count = sizeof(how_question) / sizeof(how_question[0]);
+
+	const char random_greetings, random_how_response, random_how_question, random_joke, random_fun_fact, random_something_cool;
+	srand(time(NULL));
+
+	random_greetings = greetings[rand() % greetings_count];
+	random_how_response = how_response[rand() % how_response_count];
+	random_how_question = how_question[rand() % how_question_count];
+
+	random_joke = joke[rand() % joke_count];
+	random_fun_fact = fun_fact[rand() % fun_fact_count];
+	random_something_cool = something_cool[rand() % something_cool_count];
+
+	int currentDateTime()
 	{
 		time_t     now = time(0);
 		struct tm  tstruct;
@@ -370,12 +378,12 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 
 	if (compare_token("hi", inv[0]) == 0 || compare_token("hello", inv[0]) == 0 || compare_token("hey", inv[0]) == 0) 
 	{
-		std::cout << random_greetings << "\n";
+		snprintf(response, n, "%s", random_greetings);
 	}
 	else if (compare_token("how are you?", inv[0]) == 0 || compare_token("how's everything?", inv[0]) == 0 || compare_token("how's it going?", inv[0]) == 0)
 	{
-		std::cout << random_how_response << "\n";
-		std::cout << random_how_question << "\n";
+		snprintf(response, n, "%s", random_how_response);
+		snprintf(response, n, "%s", random_how_question);
 	}
 	else if (compare_token("are you human?", inv[0]) == 0 || compare_token("are you a robot?", inv[0]) == 0)
 	{
@@ -387,37 +395,41 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 	}
 	else if (compare_token("tell me something", inv[0]) == 0)
 	{
-		std::cout << "What do you want to know?\n";
-		std::cout << "[1] Tell me a joke\n"
-			<< "[2] Tell me a fun fact\n"
-			<< "[3] Tell me something cool\n"
-			<< "[4] Exit\n";
 
-		std::string input;
-		std::getline(std::cin, input);
+		int choice;
 
-		while (input != "1" && input != "2" && input != "3" && input != "4") {
-			std::cout << "Invalid!\n\n";
+		printf("What do you want to know?\n");
+		printf("[1] Tell me a joke\n)";
+		printf("[2] Tell me a fun fact\n");
+		printf("[3] Tell me something cool\n");
+		printf("[4] Exit\n");
 
-			std::cout << "What do you want to know?\n";
-			std::cout << "[1] Tell me a joke\n"
-				<< "[2] Tell me a fun fact\n"
-				<< "[3] Tell me something cool\n"
-				<< "[4] Exit\n";
-			std::getline(std::cin, input);
+		scanf("%d" & choice);
+
+		while (input != "1" && input != "2" && input != "3" && input != "4") 
+		{
+			printf("Invalid!\n");
+
+			printf("What do you want to know?\n");
+			printf("[1] Tell me a joke\n)";
+			printf("[2] Tell me a fun fact\n");
+			printf("[3] Tell me something cool\n");
+			printf("[4] Exit\n");
+
+			scanf("%d" & choice);
 		}
 
 		if (input == "1") 
 		{
-			std::cout << random_joke << "\n";
+			snprintf(response, n, "%s", random_joke);
 		}
 		else if (input == "2") 
 		{
-			std::cout << random_fun_fact << "\n";
+			snprintf(response, n, "%s", random_fun_fact);
 		}
 		else if (input == "3")
 		{
-			std::cout << random_something_cool << "\n";
+			snprintf(response, n, "%s", random_something_cool);
 		}
 		else if (input == "4")
 		{
@@ -426,7 +438,7 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 	}
 	else if (compare_token("what day is it today?", inv[0]) == 0 || compare_token("what is the current time?", inv[0]) == 0 || compare_token("what is the date today?", inv[0]) == 0)
 	{
-		std::cout << currentDateTime() << std::endl;
+		snprintf(response, n, "%s", currentDateTime());
 	}
 
 	return 0;
