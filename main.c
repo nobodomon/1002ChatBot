@@ -45,6 +45,25 @@ int main(int argc, char *argv[]) {
 			printf("%s: ", chatbot_username());
 			fgets(input, MAX_INPUT, stdin);
 
+			/**
+			* [main.c] MODIFICATION
+			* If no newline is found, user input is larger
+			* than the buffer.
+			*/
+			// Find newline and get the pointer to it.
+			char *nl = strchr(input, '\n');
+			if (nl != NULL) {
+				// newline found, replace it with null terminator.
+				*nl = '\0';
+			} else {
+				// Clear the remaining input.
+				int c;
+				while ((c = getchar()) != '\n' && c != EOF) {
+					continue;
+				}
+			}
+			/* End of modification. */
+
 			/* split it into words */
 			inc = 0;
 			inv[inc] = strtok(input, delimiters);
@@ -127,6 +146,15 @@ void prompt_user(char *buf, int n, const char *format, ...) {
 	/* get the response from the user */
 	fgets(buf, n, stdin);
 	char *nl = strchr(buf, '\n');
-	if (nl != NULL)
+	if (nl != NULL){
 		*nl = '\0';
+	}else {
+		// Clear the remaining input.
+		int c;
+		while ((c = getchar()) != '\n' && c != EOF) {
+			continue;
+		}
+	
+	/* End of modification. */
+	}
 }

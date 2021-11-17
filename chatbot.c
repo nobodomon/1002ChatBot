@@ -44,10 +44,13 @@
 #include <string.h>
 #include "chat1002.h"
 
-#include <ctime>
+#include <time.h>
 #include <stdlib.h>
 #include <time.h>
 
+extern node_t *head_what;
+extern node_t *head_where;
+extern node_t *head_who;
 /*
  * Get the name of the chatbot.
  *
@@ -139,6 +142,8 @@ int chatbot_is_exit(const char *intent) {
  */
 int chatbot_do_exit(int inc, char *inv[], char *response, int n) {
 
+	// Free the allocated memory.
+	knowledge_reset();
 	snprintf(response, n, "Goodbye!");
 
 	return 1;
@@ -157,11 +162,7 @@ int chatbot_do_exit(int inc, char *inv[], char *response, int n) {
  *  0, otherwise
  */
 int chatbot_is_load(const char *intent) {
-
-	/* to be implemented */
-
-	return 0;
-
+	return compare_token(intent, "load") == 0;
 }
 
 
@@ -175,11 +176,37 @@ int chatbot_is_load(const char *intent) {
  *   0 (the chatbot always continues chatting after loading knowledge)
  */
 int chatbot_do_load(int inc, char *inv[], char *response, int n) {
+	/*
+		fp:		The file pointer.
+		ctr:	The number of successful results retrieved from the file.
+	*/
+	FILE *fp;
+	int ctr = 0;
+	char file_path[MAX_INPUT];
 
-	/* to be implemented */
+	// Get the file path from the user input.
+	if (compare_token(inv[1], "from") == 0) {
+		// LOAD[0] from[1] /path/to/file[2]
+		strcpy(file_path, inv[2]);
+	} else {
+		// LOAD[0] /path/to/file[1]
+		strcpy(file_path, inv[1]);
+	}
+
+	// Open the file in read mode.
+	fp = fopen(file_path, "r");
+
+	if (fp != NULL) {
+		// File exists.
+		ctr = knowledge_read(fp);
+		fclose(fp);
+		snprintf(response, n, "I have loaded %d results from the knowledge base [%s].", ctr, file_path);
+	} else {
+		// File does not exist.
+		snprintf(response, n, "Sorry, I can't load the knowledge base [%s].", file_path);
+	}
 
 	return 0;
-
 }
 
 
@@ -217,10 +244,37 @@ int chatbot_is_question(const char *intent) {
  */
 int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 
-	/* to be implemented */
+	/*
+		unsure:		A string for unsure questions.
+		enti:		A string to store the entity.
+		ans:		A string to store the answer to the question.
+	*/
+	char unsure[MAX_RESPONSE] = "I don't know. ";
+	char enti[MAX_ENTITY] = "";
+	char ans[MAX_RESPONSE] = "";
+
+	size_t offset = 1;
+
+	// Check where does the question start.
+	if (
+		compare_token(inv[1], "is") == 0 ||
+		compare_token(inv[1], "are") == 0
+	) {
+		offset = 2;
+	}
+
+	safe_strcat(enti, inv, inc, (MAX_ENTITY - 1), offset);
+
+	if (knowledge_get(inv[0], enti, response, n) == KB_NOTFOUND) {
+		safe_strcat(unsure, inv, inc, (MAX_RESPONSE - 1), 0);
+		strcat(unsure, "?");
+
+		prompt_user(ans, MAX_RESPONSE, "%s", unsure);
+		knowledge_put(inv[0], enti, ans);
+		snprintf(response, n, "Thank you.");
+	}
 
 	return 0;
-
 }
 
 
@@ -253,11 +307,12 @@ int chatbot_is_reset(const char *intent) {
  *   0 (the chatbot always continues chatting after beign reset)
  */
 int chatbot_do_reset(int inc, char *inv[], char *response, int n) {
-
-	/* to be implemented */
-
+	// Reseed the random number generator.
+	srand((unsigned)(time(NULL)));
+	// Reset the knowledge base in memory.
+	knowledge_reset();
+	snprintf(response, n, "I have reset my knowledge for this session.");
 	return 0;
-
 }
 
 
@@ -290,11 +345,38 @@ int chatbot_is_save(const char *intent) {
  *   0 (the chatbot always continues chatting after saving knowledge)
  */
 int chatbot_do_save(int inc, char *inv[], char *response, int n) {
+	/*
+		fp:		The file pointer.
+	*/
+	FILE *fp;
+	char file_path[MAX_INPUT];
 
-	/* to be implemented */
+	// Get the file path from the user input.
+	if (
+		compare_token(inv[1], "to") == 0 ||
+		compare_token(inv[1], "as") == 0
+	) {
+		// Save[0] to[1] /path/to/file[2]
+		// Save[0] as[1] /path/to/file[2]
+		strcpy(file_path, inv[2]);
+	} else {
+		// save[0] /path/to/file[1]
+		strcpy(file_path, inv[1]);
+	}
 
+	// Open the file in write mode.
+	fp = fopen(file_path, "w");
+
+	if (fp != NULL) {
+		// File exists.
+		knowledge_write(fp);
+		fclose(fp);
+		snprintf(response, n, "I have saved the results from the knowledge base to [%s].", file_path);
+	} else {
+		// File does not exist.
+		snprintf(response, n, "Sorry, I can't save the knowledge base to [%s].", file_path);
+	}
 	return 0;
-
 }
 
 
@@ -337,7 +419,9 @@ int chatbot_is_smalltalk(const char *intent) {
  *   1, if the chatbot should stop chatting (e.g. the smalltalk was "goodbye" etc.)
  */
 int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
-
+	
+	const char *random_hi[] = {"Hi!", "Hello!", "Hello there!", "Hey hey~", "What's Up!!"};
+	const char *random_can[] = {"What do you think?", "Maybe I could!", "Well, it's either a yes or a no."};
 	const char* greetings[] = {"Hi!", "Hello!", "Hey~", "Hey there!", "Greetings", "Welcome!", "What's up?", "Howdy!", "Hi-ya~"};
 	const char* how_response[] = {"I'm good, thanks.", "Great!", "Great great, thanks.", "I'm doing well.", "Fine, thanks."};
 	const char* how_question[] = {"And you?", "How are you?", "How's everything?", "How's it going?"};
@@ -354,9 +438,10 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 	const size_t fun_fact_count = sizeof(how_response) / sizeof(how_response[0]);
 	const size_t something_cool_count = sizeof(how_question) / sizeof(how_question[0]);
 
-	const char random_greetings, random_how_response, random_how_question, random_joke, random_fun_fact, random_something_cool;
+	char *random_greetings, *random_how_response, *random_how_question, *random_joke, *random_fun_fact, *random_something_cool;
 	srand(time(NULL));
 
+	size_t rand_int = (size_t)(rand() % 5);
 	random_greetings = greetings[rand() % greetings_count];
 	random_how_response = how_response[rand() % how_response_count];
 	random_how_question = how_question[rand() % how_question_count];
@@ -365,16 +450,6 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 	random_fun_fact = fun_fact[rand() % fun_fact_count];
 	random_something_cool = something_cool[rand() % something_cool_count];
 
-	int currentDateTime()
-	{
-		time_t     now = time(0);
-		struct tm  tstruct;
-		char       buf[80];
-		tstruct = *localtime(&now);
-		strftime(buf, sizeof(buf), "Today's Date:%Y-%m-%d Current Time:%X", &tstruct);
-
-		return buf;
-	}
 
 	if (compare_token("hi", inv[0]) == 0 || compare_token("hello", inv[0]) == 0 || compare_token("hey", inv[0]) == 0) 
 	{
@@ -392,6 +467,44 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 	else if (compare_token("what is your name?", inv[0]) == 0 || compare_token("who are you?", inv[0]) == 0)
 	{
 		snprintf(response, n, "I am chatty the chatbot.");
+	}else if (compare_token("good", inv[0]) == 0) {
+		// SMALLTALK: "Good day" feature.
+		if (inc > 1) {
+			snprintf(response, n, "Good %s to you too!", inv[1]);
+		} else {
+			snprintf(response, n, "Good day!");
+		}
+	} else if (
+		compare_token("hello", inv[0]) == 0 ||
+		compare_token("hey", inv[0]) == 0 ||
+		compare_token("hi", inv[0]) == 0
+	) {
+		// SMALLTALK: "Hello" feature.
+		snprintf(response, n, "%s" , random_hi[rand_int]);
+	} else if (compare_token("can", inv[0]) == 0) {
+		// SMALLTALK: "Can" feature.
+		if (rand_int == 3) {
+			if (compare_token(inv[1], "you") == 0) {
+				snprintf(response, n, "I don't know, can I?");
+			} else if (compare_token(inv[1], "i") == 0) {
+				snprintf(response, n, "I don't know, can you?");
+			} else {
+				snprintf(response, n, "I don't know, can it?");
+			}
+		} else if (rand_int == 4) {
+			char qns[MAX_INPUT] = "";
+			safe_strcat(qns, inv, inc, (MAX_INPUT - 1), 0);
+			snprintf(response, n, "Think about it, %s?", qns);
+		} else {
+			snprintf(response, n, "%s", random_can[rand_int]);
+		}
+	} else if (
+		compare_token("it", inv[0]) == 0 ||
+		compare_token("its", inv[0]) == 0 ||
+		compare_token("it's", inv[0]) == 0
+	) {
+		// SMALLTALK: "It" feature.
+		snprintf(response, n, "Indeed it is.");
 	}
 	else if (compare_token("tell me something", inv[0]) == 0)
 	{
@@ -399,46 +512,51 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 		int choice;
 
 		printf("What do you want to know?\n");
-		printf("[1] Tell me a joke\n)";
+		printf("[1] Tell me a joke\n");
 		printf("[2] Tell me a fun fact\n");
 		printf("[3] Tell me something cool\n");
 		printf("[4] Exit\n");
 
-		scanf("%d" & choice);
+		scanf_s("%d",&choice);
 
-		while (input != "1" && input != "2" && input != "3" && input != "4") 
+		while (choice != "1" && choice != "2" && choice != "3" && choice != "4")
 		{
 			printf("Invalid!\n");
 
 			printf("What do you want to know?\n");
-			printf("[1] Tell me a joke\n)";
+			printf("[1] Tell me a joke\n");
 			printf("[2] Tell me a fun fact\n");
 			printf("[3] Tell me something cool\n");
 			printf("[4] Exit\n");
 
-			scanf("%d" & choice);
+			scanf_s("%d",& choice);
 		}
 
-		if (input == "1") 
+		if (choice == "1")
 		{
 			snprintf(response, n, "%s", random_joke);
 		}
-		else if (input == "2") 
+		else if (choice == "2")
 		{
 			snprintf(response, n, "%s", random_fun_fact);
 		}
-		else if (input == "3")
+		else if (choice == "3")
 		{
 			snprintf(response, n, "%s", random_something_cool);
 		}
-		else if (input == "4")
+		else if (choice == "4")
 		{
 			return 0;
 		}
 	}
 	else if (compare_token("what day is it today?", inv[0]) == 0 || compare_token("what is the current time?", inv[0]) == 0 || compare_token("what is the date today?", inv[0]) == 0)
 	{
-		snprintf(response, n, "%s", currentDateTime());
+		time_t rawtime;
+		struct tm* timeinfo;
+
+		time(&rawtime);
+		timeinfo = localtime(&rawtime);
+		snprintf(response, n, "[%d %d %d %d:%d:%d]", timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
 	}
 
 	return 0;

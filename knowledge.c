@@ -16,6 +16,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "chat1002.h"
+extern node_t *head_what;
+extern node_t *head_where;
+extern node_t *head_who;
 
 /*
  * Get the response to a question.
@@ -33,9 +36,34 @@
  */
 int knowledge_get(const char *intent, const char *entity, char *response, int n) {
 
-	/* to be implemented */
+	node_t *search;
+	int result = KB_NOTFOUND;
 
-	return KB_NOTFOUND;
+	if (compare_token(intent, "what") == 0) {
+		// Intent is what.
+		search = head_what;
+	} else if (compare_token(intent, "where") == 0) {
+		// Intent is where.
+		search = head_where;
+	} else if (compare_token(intent, "who") == 0) {
+		// Intent is who.
+		search = head_who;
+	} else {
+		// Invalid intent.
+		return KB_INVALID;
+	}
+
+	while(search != NULL){
+		if (compare_token(entity, search->entity) == 0){
+			// Found response in knowledge base.
+			snprintf(response, n, "%s" , search->response);
+			result = KB_FOUND;
+			break;
+		}
+		search = search->next;
+	}
+
+	return result;
 
 }
 
@@ -56,11 +84,23 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
  *   KB_INVALID, if the intent is not a valid question word
  */
 int knowledge_put(const char *intent, const char *entity, const char *response) {
+	int result;
 
-	/* to be implemented */
+	if (compare_token(intent, "what") == 0) {
+		// Intent is what.
+		result = kb_update_what(node_create(entity, response));
+	} else if (compare_token(intent, "where") == 0) {
+		// Intent is where.
+		result = kb_update_where(node_create(entity, response));
+	} else if (compare_token(intent, "who") == 0) {
+		// Intent is who.
+		result = kb_update_who(node_create(entity, response));
+	} else {
+		// Invalid intent.
+		result = KB_INVALID;
+	}
 
-	return KB_INVALID;
-
+	return result;
 }
 
 
@@ -74,9 +114,82 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
  */
 int knowledge_read(FILE *f) {
 
-	/* to be implemented */
+	/*
+		ctr:	The number of successful results retrieved from the file.
+		result:	The result of inserting the entity-response into the knowledge base.
+		line:	The buffer to store content of the file.
+	*/
+	int ctr = 0, result;
+	char line[MAX_INPUT];
+	char *f_intent;
 
-	return 0;
+	const size_t MAX_READLEN = (size_t)(MAX_ENTITY + MAX_RESPONSE);
+
+	while (fgets(line, MAX_READLEN, (FILE*) f)) {
+		char *f_entity, *f_response;
+		char *cr, *nl;
+
+		// Read line by line.
+		if (
+			strcmp(line, "\n") == 0 ||
+			strcmp(line, "\r\n") == 0
+		) {
+			// Empty line.
+			continue;
+		} else {
+			cr = strchr(line, '\r');
+			nl = strchr(line, '\n');
+
+			if (cr != NULL) {
+				// Carriage return found, replace it with null terminator.
+				*cr = '\0';
+			} else if (nl != NULL) {
+				// newline found, replace it with null terminator.
+				*nl = '\0';
+			} else {
+				// Clear any remaining input to prevent overflow.
+				int c;
+				while ((c = getchar()) != '\n' && c != EOF) {
+					continue;
+				}
+			}
+
+			if (
+				strchr(line, '[') != NULL &&
+				strchr(line, ']') != NULL
+			) {
+				// Square brackets found. Check intent.
+				if (compare_token(line, "[what]") == 0) {
+					// Intent: what.
+					f_intent = "what";
+				} else if (compare_token(line, "[where]") == 0) {
+					// Intent: where.
+					f_intent = "where";
+				} else if (compare_token(line, "[who]") == 0) {
+					// Intent: who.
+					f_intent = "who";
+				} else {
+					// Invalid intent.
+					f_intent = NULL;
+				}
+			} else if (
+				f_intent != NULL &&
+				strchr(line, '=') != NULL
+			) {
+				// Entity-Response pair line.
+				f_entity = strtok(line, "=");
+				f_response = strtok(NULL, "=");
+				result = knowledge_put(f_intent, f_entity, f_response);
+
+				if (result == KB_FOUND) {
+					// Increment the successful counter.
+					ctr++;
+				}
+			}
+		}
+	}
+
+	return ctr;
 }
 
 
@@ -84,9 +197,13 @@ int knowledge_read(FILE *f) {
  * Reset the knowledge base, removing all know entitities from all intents.
  */
 void knowledge_reset() {
+	linkedlist_free(head_what);
+	linkedlist_free(head_where);
+	linkedlist_free(head_who);
 
-	/* to be implemented */
-
+	head_what = NULL;
+	head_where = NULL;
+	head_who = NULL;
 }
 
 
@@ -97,7 +214,28 @@ void knowledge_reset() {
  *   f - the file
  */
 void knowledge_write(FILE *f) {
+	node_t *what = head_what;
+	node_t *where = head_where;
+	node_t *who = head_who;
 
-	/* to be implemented */
+	// Save "what" intent's entitiy-responses.
+	fprintf(f, "[what]\n");
+	while (what != NULL) {
+		fprintf(f, "%s=%s\n", what->entity, what->response);
+		what = what->next;
+	}
 
+	// Save "where" intent's entitiy-responses.
+	fprintf(f, "\n[where]\n");
+	while (where != NULL) {
+		fprintf(f, "%s=%s\n", where->entity, where->response);
+		where = where->next;
+	}
+
+	// Save "what" intent's entitiy-responses.
+	fprintf(f, "\n[who]\n");
+	while (who != NULL) {
+		fprintf(f, "%s=%s\n", who->entity, who->response);
+		who = who->next;
+	}
 }

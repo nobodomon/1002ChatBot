@@ -23,11 +23,18 @@
 #define MAX_RESPONSE 256
 
 /* return codes for knowledge_get() and knowledge_put() */
-#define KB_OK        0
+#define KB_FOUND     0
 #define KB_NOTFOUND -1
 #define KB_INVALID  -2
 #define KB_NOMEM    -3
- 
+
+/* Intent-Entity-Response struct. */
+typedef struct node_struct {
+	char entity[MAX_ENTITY];
+	char response[MAX_RESPONSE];
+	struct node_struct *next; // Pointer to the next node in the linked list.
+} node_t;
+
 /* functions defined in main.c */
 int compare_token(const char *token1, const char *token2);
 void prompt_user(char *buf, int n, const char *format, ...);
@@ -55,5 +62,22 @@ int knowledge_put(const char *intent, const char *entity, const char *response);
 void knowledge_reset();
 int knowledge_read(FILE *f);
 void knowledge_write(FILE *f);
+
+/* Functions defined in kb.c */
+void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset);
+node_t * node_create(const char *entity, const char *resp);
+void linkedlist_add(node_t *head, node_t *node);
+void linkedlist_free(node_t *node);
+int kb_update_what(node_t *new_node);
+int kb_update_where(node_t *new_node);
+int kb_update_who(node_t *new_node);
+
+/*
+	Linked lists.
+	Use "extern" to mark external variable.
+*/
+node_t *head_what;
+node_t *head_where;
+node_t *head_who;
 
 #endif
