@@ -48,15 +48,17 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern node_t *head_what;
-extern node_t *head_where;
-extern node_t *head_who;
+extern node_t* head_what;
+extern node_t* head_where;
+extern node_t* head_who;
+
+
 /*
  * Get the name of the chatbot.
  *
  * Returns: the name of the chatbot as a null-terminated string
  */
-const char *chatbot_botname() {
+const char* chatbot_botname() {
 
 	return "Chatbot";
 
@@ -68,7 +70,7 @@ const char *chatbot_botname() {
  *
  * Returns: the name of the user as a null-terminated string
  */
-const char *chatbot_username() {
+const char* chatbot_username() {
 
 	return "User";
 
@@ -85,7 +87,7 @@ const char *chatbot_username() {
  *   0, if the chatbot should continue chatting
  *   1, if the chatbot should stop (i.e. it detected the EXIT intent)
  */
-int chatbot_main(int inc, char *inv[], char *response, int n) {
+int chatbot_main(int inc, char* inv[], char* response, int n) {
 
 	/* check for empty input */
 	if (inc < 1) {
@@ -93,10 +95,13 @@ int chatbot_main(int inc, char *inv[], char *response, int n) {
 		return 0;
 	}
 
+	char intent[MAX_INPUT] = { 0 };
+	safe_strcat(intent, inv, inc, MAX_INPUT - 1, 0);
+
 	/* look for an intent and invoke the corresponding do_* function */
 	if (chatbot_is_exit(inv[0]))
 		return chatbot_do_exit(inc, inv, response, n);
-	else if (chatbot_is_smalltalk(inv[0]))
+	else if (chatbot_is_smalltalk(intent))
 		return chatbot_do_smalltalk(inc, inv, response, n);
 	else if (chatbot_is_load(inv[0]))
 		return chatbot_do_load(inc, inv, response, n);
@@ -124,7 +129,7 @@ int chatbot_main(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "exit" or "quit"
  *  0, otherwise
  */
-int chatbot_is_exit(const char *intent) {
+int chatbot_is_exit(const char* intent) {
 
 	return compare_token(intent, "exit") == 0 || compare_token(intent, "quit") == 0;
 
@@ -140,7 +145,7 @@ int chatbot_is_exit(const char *intent) {
  * Returns:
  *   0 (the chatbot always continues chatting after a question)
  */
-int chatbot_do_exit(int inc, char *inv[], char *response, int n) {
+int chatbot_do_exit(int inc, char* inv[], char* response, int n) {
 
 	// Free the allocated memory.
 	knowledge_reset();
@@ -161,7 +166,7 @@ int chatbot_do_exit(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "load"
  *  0, otherwise
  */
-int chatbot_is_load(const char *intent) {
+int chatbot_is_load(const char* intent) {
 	return compare_token(intent, "load") == 0;
 }
 
@@ -175,12 +180,12 @@ int chatbot_is_load(const char *intent) {
  * Returns:
  *   0 (the chatbot always continues chatting after loading knowledge)
  */
-int chatbot_do_load(int inc, char *inv[], char *response, int n) {
+int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	/*
 		fp:		The file pointer.
 		ctr:	The number of successful results retrieved from the file.
 	*/
-	FILE *fp;
+	FILE* fp;
 	int ctr = 0;
 	char file_path[MAX_INPUT];
 
@@ -188,7 +193,8 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
 	if (compare_token(inv[1], "from") == 0) {
 		// LOAD[0] from[1] /path/to/file[2]
 		strcpy(file_path, inv[2]);
-	} else {
+	}
+	else {
 		// LOAD[0] /path/to/file[1]
 		strcpy(file_path, inv[1]);
 	}
@@ -201,7 +207,8 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
 		ctr = knowledge_read(fp);
 		fclose(fp);
 		snprintf(response, n, "I have loaded %d results from the knowledge base [%s].", ctr, file_path);
-	} else {
+	}
+	else {
 		// File does not exist.
 		snprintf(response, n, "Sorry, I can't load the knowledge base [%s].", file_path);
 	}
@@ -220,7 +227,7 @@ int chatbot_do_load(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "what", "where", or "who"
  *  0, otherwise
  */
-int chatbot_is_question(const char *intent) {
+int chatbot_is_question(const char* intent) {
 
 	return compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0;
 
@@ -242,7 +249,7 @@ int chatbot_is_question(const char *intent) {
  * Returns:
  *   0 (the chatbot always continues chatting after a question)
  */
-int chatbot_do_question(int inc, char *inv[], char *response, int n) {
+int chatbot_do_question(int inc, char* inv[], char* response, int n) {
 
 	/*
 		unsure:		A string for unsure questions.
@@ -259,7 +266,7 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
 	if (
 		compare_token(inv[1], "is") == 0 ||
 		compare_token(inv[1], "are") == 0
-	) {
+		) {
 		offset = 2;
 	}
 
@@ -288,7 +295,7 @@ int chatbot_do_question(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "reset"
  *  0, otherwise
  */
-int chatbot_is_reset(const char *intent) {
+int chatbot_is_reset(const char* intent) {
 
 	return compare_token(intent, "reset") == 0;
 
@@ -306,7 +313,7 @@ int chatbot_is_reset(const char *intent) {
  * Returns:
  *   0 (the chatbot always continues chatting after beign reset)
  */
-int chatbot_do_reset(int inc, char *inv[], char *response, int n) {
+int chatbot_do_reset(int inc, char* inv[], char* response, int n) {
 	// Reseed the random number generator.
 	srand((unsigned)(time(NULL)));
 	// Reset the knowledge base in memory.
@@ -326,7 +333,7 @@ int chatbot_do_reset(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is "what", "where", or "who"
  *  0, otherwise
  */
-int chatbot_is_save(const char *intent) {
+int chatbot_is_save(const char* intent) {
 
 	return compare_token(intent, "save") == 0;
 
@@ -344,22 +351,23 @@ int chatbot_is_save(const char *intent) {
  * Returns:
  *   0 (the chatbot always continues chatting after saving knowledge)
  */
-int chatbot_do_save(int inc, char *inv[], char *response, int n) {
+int chatbot_do_save(int inc, char* inv[], char* response, int n) {
 	/*
 		fp:		The file pointer.
 	*/
-	FILE *fp;
+	FILE* fp;
 	char file_path[MAX_INPUT];
 
 	// Get the file path from the user input.
 	if (
 		compare_token(inv[1], "to") == 0 ||
 		compare_token(inv[1], "as") == 0
-	) {
+		) {
 		// Save[0] to[1] /path/to/file[2]
 		// Save[0] as[1] /path/to/file[2]
 		strcpy(file_path, inv[2]);
-	} else {
+	}
+	else {
 		// save[0] /path/to/file[1]
 		strcpy(file_path, inv[1]);
 	}
@@ -372,7 +380,8 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
 		knowledge_write(fp);
 		fclose(fp);
 		snprintf(response, n, "I have saved the results from the knowledge base to [%s].", file_path);
-	} else {
+	}
+	else {
 		// File does not exist.
 		snprintf(response, n, "Sorry, I can't save the knowledge base to [%s].", file_path);
 	}
@@ -391,13 +400,13 @@ int chatbot_do_save(int inc, char *inv[], char *response, int n) {
  *  1, if the intent is the first word of one of the smalltalk phrases
  *  0, otherwise
  */
-int chatbot_is_smalltalk(const char *intent) {
+int chatbot_is_smalltalk(const char* intent) {
 
-	const char* smalltalk[] = { "hi", "hello", "hey", "how are you?", "how's everything?", "how's it going?", "are you human?", "are you a robot?", "what is your name?", "who are you?" , "tell me something" , "what day is it today?" , "what is the current time?" , "what is the date today?"};
+	const char* smalltalk[] = { "hi", "hello", "hey", "how are you?", "how's everything?", "how's it going?", "are you human?", "are you a robot?", "what is your name?", "who are you?" , "tell me something" , "what day is it today?" , "what is the current time?" , "what is the date today?" };
 
-	for (int i = 0; i < 14; i++) 
+	for (int i = 0; i < 14; i++)
 	{
-		if (compare_token(intent, smalltalk[i]) == 0) 
+		if (compare_token(intent, smalltalk[i]) == 0)
 		{
 			return 1;
 		}
@@ -418,13 +427,16 @@ int chatbot_is_smalltalk(const char *intent) {
  *   0, if the chatbot should continue chatting
  *   1, if the chatbot should stop chatting (e.g. the smalltalk was "goodbye" etc.)
  */
-int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
-	
-	const char *random_hi[] = {"Hi!", "Hello!", "Hello there!", "Hey hey~", "What's Up!!"};
-	const char *random_can[] = {"What do you think?", "Maybe I could!", "Well, it's either a yes or a no."};
-	const char* greetings[] = {"Hi!", "Hello!", "Hey~", "Hey there!", "Greetings", "Welcome!", "What's up?", "Howdy!", "Hi-ya~"};
-	const char* how_response[] = {"I'm good, thanks.", "Great!", "Great great, thanks.", "I'm doing well.", "Fine, thanks."};
-	const char* how_question[] = {"And you?", "How are you?", "How's everything?", "How's it going?"};
+int chatbot_do_smalltalk(int inc, char* inv[], char* response, int n) {
+
+	char intent[MAX_INPUT] = { 0 };
+	safe_strcat(intent, inv, inc, MAX_INPUT - 1, 0);
+
+	const char* random_hi[] = { "Hi!", "Hello!", "Hello there!", "Hey hey~", "What's Up!!" };
+	const char* random_can[] = { "What do you think?", "Maybe I could!", "Well, it's either a yes or a no." };
+	const char* greetings[] = { "Hi!", "Hello!", "Hey~", "Hey there!", "Greetings", "Welcome!", "What's up?", "Howdy!", "Hi-ya~" };
+	const char* how_response[] = { "I'm good, thanks.", "Great!", "Great great, thanks.", "I'm doing well.", "Fine, thanks." };
+	const char* how_question[] = { "And you?", "How are you?", "How's everything?", "How's it going?" };
 
 	const char* joke[] = { "I can’t believe I got fired from the calendar factory. All I did was take a day off!", "Never trust atoms; they make up everything.", "I was wondering why the frisbee kept getting bigger and bigger, but then it hit me.", "I just got kicked out of a secret cooking society. I spilled the beans." };
 	const char* fun_fact[] = { "A shrimp's heart is in its head.", "Like fingerprints, everyone's tongue print is different.", "Almonds are a member of the peach family.", "A shark is the only known fish that can blink with both eyes." };
@@ -438,7 +450,7 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 	const size_t fun_fact_count = sizeof(how_response) / sizeof(how_response[0]);
 	const size_t something_cool_count = sizeof(how_question) / sizeof(how_question[0]);
 
-	char *random_greetings, *random_how_response, *random_how_question, *random_joke, *random_fun_fact, *random_something_cool;
+	char* random_greetings, * random_how_response, * random_how_question, * random_joke, * random_fun_fact, * random_something_cool;
 	srand(time(NULL));
 
 	size_t rand_int = (size_t)(rand() % 5);
@@ -451,62 +463,71 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 	random_something_cool = something_cool[rand() % something_cool_count];
 
 
-	if (compare_token("hi", inv[0]) == 0 || compare_token("hello", inv[0]) == 0 || compare_token("hey", inv[0]) == 0) 
+	if (compare_token("hi", inv[0]) == 0 || compare_token("hello", inv[0]) == 0 || compare_token("hey", inv[0]) == 0)
 	{
 		snprintf(response, n, "%s", random_greetings);
 	}
-	else if (compare_token("how are you?", inv[0]) == 0 || compare_token("how's everything?", inv[0]) == 0 || compare_token("how's it going?", inv[0]) == 0)
+	else if (compare_token("how are you?", intent) == 0 || compare_token("how's everything?", intent) == 0 || compare_token("how's it going?", intent) == 0)
 	{
 		snprintf(response, n, "%s", random_how_response);
 		snprintf(response, n, "%s", random_how_question);
 	}
-	else if (compare_token("are you human?", inv[0]) == 0 || compare_token("are you a robot?", inv[0]) == 0)
+	else if (compare_token("are you human?", intent) == 0 || compare_token("are you a robot?", intent) == 0)
 	{
 		snprintf(response, n, "I am a robot. Are you a robot?");
 	}
-	else if (compare_token("what is your name?", inv[0]) == 0 || compare_token("who are you?", inv[0]) == 0)
+	else if (compare_token("what is your name?", intent) == 0 || compare_token("who are you?", intent) == 0)
 	{
 		snprintf(response, n, "I am chatty the chatbot.");
-	}else if (compare_token("good", inv[0]) == 0) {
+	}
+	else if (compare_token("good", inv[0]) == 0) {
 		// SMALLTALK: "Good day" feature.
 		if (inc > 1) {
 			snprintf(response, n, "Good %s to you too!", inv[1]);
-		} else {
+		}
+		else {
 			snprintf(response, n, "Good day!");
 		}
-	} else if (
+	}
+	else if (
 		compare_token("hello", inv[0]) == 0 ||
 		compare_token("hey", inv[0]) == 0 ||
 		compare_token("hi", inv[0]) == 0
-	) {
+		) {
 		// SMALLTALK: "Hello" feature.
-		snprintf(response, n, "%s" , random_hi[rand_int]);
-	} else if (compare_token("can", inv[0]) == 0) {
+		snprintf(response, n, "%s", random_hi[rand_int]);
+	}
+	else if (compare_token("can", inv[0]) == 0) {
 		// SMALLTALK: "Can" feature.
 		if (rand_int == 3) {
 			if (compare_token(inv[1], "you") == 0) {
 				snprintf(response, n, "I don't know, can I?");
-			} else if (compare_token(inv[1], "i") == 0) {
+			}
+			else if (compare_token(inv[1], "i") == 0) {
 				snprintf(response, n, "I don't know, can you?");
-			} else {
+			}
+			else {
 				snprintf(response, n, "I don't know, can it?");
 			}
-		} else if (rand_int == 4) {
+		}
+		else if (rand_int == 4) {
 			char qns[MAX_INPUT] = "";
 			safe_strcat(qns, inv, inc, (MAX_INPUT - 1), 0);
 			snprintf(response, n, "Think about it, %s?", qns);
-		} else {
+		}
+		else {
 			snprintf(response, n, "%s", random_can[rand_int]);
 		}
-	} else if (
+	}
+	else if (
 		compare_token("it", inv[0]) == 0 ||
 		compare_token("its", inv[0]) == 0 ||
 		compare_token("it's", inv[0]) == 0
-	) {
+		) {
 		// SMALLTALK: "It" feature.
 		snprintf(response, n, "Indeed it is.");
 	}
-	else if (compare_token("tell me something", inv[0]) == 0)
+	else if (compare_token("tell me something", intent) == 0)
 	{
 
 		int choice;
@@ -517,9 +538,9 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 		printf("[3] Tell me something cool\n");
 		printf("[4] Exit\n");
 
-		scanf_s("%d",&choice);
+		scanf_s("%d", &choice);
 
-		while (choice != "1" && choice != "2" && choice != "3" && choice != "4")
+		while (choice != 1 && choice != 2 && choice != 3 && choice != 4)
 		{
 			printf("Invalid!\n");
 
@@ -529,27 +550,27 @@ int chatbot_do_smalltalk(int inc, char *inv[], char *response, int n) {
 			printf("[3] Tell me something cool\n");
 			printf("[4] Exit\n");
 
-			scanf_s("%d",& choice);
+			scanf_s("%d", &choice);
 		}
 
-		if (choice == "1")
+		if (choice == 1)
 		{
 			snprintf(response, n, "%s", random_joke);
 		}
-		else if (choice == "2")
+		else if (choice == 2)
 		{
 			snprintf(response, n, "%s", random_fun_fact);
 		}
-		else if (choice == "3")
+		else if (choice == 3)
 		{
 			snprintf(response, n, "%s", random_something_cool);
 		}
-		else if (choice == "4")
+		else if (choice == 4)
 		{
 			return 0;
 		}
 	}
-	else if (compare_token("what day is it today?", inv[0]) == 0 || compare_token("what is the current time?", inv[0]) == 0 || compare_token("what is the date today?", inv[0]) == 0)
+	else if (compare_token("what day is it today?", intent) == 0 || compare_token("what is the current time?", intent) == 0 || compare_token("what is the date today?", intent) == 0)
 	{
 		time_t rawtime;
 		struct tm* timeinfo;
