@@ -16,9 +16,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "chat1002.h"
-extern node_t* head_what;
-extern node_t* head_where;
-extern node_t* head_who;
+extern node_t *head_what;
+extern node_t *head_where;
+extern node_t *head_who;
 
 /*
  * Get the response to a question.
@@ -34,32 +34,29 @@ extern node_t* head_who;
  *   KB_NOTFOUND, if no response could be found
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
-int knowledge_get(const char* intent, const char* entity, char* response, int n) {
+int knowledge_get(const char *intent, const char *entity, char *response, int n) {
 
-	node_t* search;
+	node_t *search;
 	int result = KB_NOTFOUND;
 
 	if (compare_token(intent, "what") == 0) {
 		// Intent is what.
 		search = head_what;
-	}
-	else if (compare_token(intent, "where") == 0) {
+	} else if (compare_token(intent, "where") == 0) {
 		// Intent is where.
 		search = head_where;
-	}
-	else if (compare_token(intent, "who") == 0) {
+	} else if (compare_token(intent, "who") == 0) {
 		// Intent is who.
 		search = head_who;
-	}
-	else {
+	} else {
 		// Invalid intent.
 		return KB_INVALID;
 	}
 
-	while (search != NULL) {
-		if (compare_token(entity, search->entity) == 0) {
+	while(search != NULL){
+		if (compare_token(entity, search->entity) == 0){
 			// Found response in knowledge base.
-			snprintf(response, n, "%s", search->response);
+			snprintf(response, n, "%s" , search->response);
 			result = KB_FOUND;
 			break;
 		}
@@ -86,22 +83,19 @@ int knowledge_get(const char* intent, const char* entity, char* response, int n)
  *   KB_NOMEM, if there was a memory allocation failure
  *   KB_INVALID, if the intent is not a valid question word
  */
-int knowledge_put(const char* intent, const char* entity, const char* response) {
+int knowledge_put(const char *intent, const char *entity, const char *response) {
 	int result;
 
 	if (compare_token(intent, "what") == 0) {
 		// Intent is what.
 		result = kb_update_what(node_create(entity, response));
-	}
-	else if (compare_token(intent, "where") == 0) {
+	} else if (compare_token(intent, "where") == 0) {
 		// Intent is where.
 		result = kb_update_where(node_create(entity, response));
-	}
-	else if (compare_token(intent, "who") == 0) {
+	} else if (compare_token(intent, "who") == 0) {
 		// Intent is who.
 		result = kb_update_who(node_create(entity, response));
-	}
-	else {
+	} else {
 		// Invalid intent.
 		result = KB_INVALID;
 	}
@@ -118,7 +112,7 @@ int knowledge_put(const char* intent, const char* entity, const char* response) 
  *
  * Returns: the number of entity/response pairs successful read from the file
  */
-int knowledge_read(FILE* f) {
+int knowledge_read(FILE *f) {
 
 	/*
 		ctr:	The number of successful results retrieved from the file.
@@ -127,35 +121,32 @@ int knowledge_read(FILE* f) {
 	*/
 	int ctr = 0, result;
 	char line[MAX_INPUT];
-	char* f_intent;
+	char *f_intent;
 
 	const size_t MAX_READLEN = (size_t)(MAX_ENTITY + MAX_RESPONSE);
 
-	while (fgets(line, MAX_READLEN, (FILE*)f)) {
-		char* f_entity, * f_response;
-		char* cr, * nl;
+	while (fgets(line, MAX_READLEN, (FILE*) f)) {
+		char *f_entity, *f_response;
+		char *cr, *nl;
 
 		// Read line by line.
 		if (
 			strcmp(line, "\n") == 0 ||
 			strcmp(line, "\r\n") == 0
-			) {
+		) {
 			// Empty line.
 			continue;
-		}
-		else {
+		} else {
 			cr = strchr(line, '\r');
 			nl = strchr(line, '\n');
 
 			if (cr != NULL) {
 				// Carriage return found, replace it with null terminator.
 				*cr = '\0';
-			}
-			else if (nl != NULL) {
+			} else if (nl != NULL) {
 				// newline found, replace it with null terminator.
 				*nl = '\0';
-			}
-			else {
+			} else {
 				// Clear any remaining input to prevent overflow.
 				int c;
 				while ((c = getchar()) != '\n' && c != EOF) {
@@ -166,29 +157,25 @@ int knowledge_read(FILE* f) {
 			if (
 				strchr(line, '[') != NULL &&
 				strchr(line, ']') != NULL
-				) {
+			) {
 				// Square brackets found. Check intent.
 				if (compare_token(line, "[what]") == 0) {
 					// Intent: what.
 					f_intent = "what";
-				}
-				else if (compare_token(line, "[where]") == 0) {
+				} else if (compare_token(line, "[where]") == 0) {
 					// Intent: where.
 					f_intent = "where";
-				}
-				else if (compare_token(line, "[who]") == 0) {
+				} else if (compare_token(line, "[who]") == 0) {
 					// Intent: who.
 					f_intent = "who";
-				}
-				else {
+				} else {
 					// Invalid intent.
 					f_intent = NULL;
 				}
-			}
-			else if (
+			} else if (
 				f_intent != NULL &&
 				strchr(line, '=') != NULL
-				) {
+			) {
 				// Entity-Response pair line.
 				f_entity = strtok(line, "=");
 				f_response = strtok(NULL, "=");
@@ -226,10 +213,10 @@ void knowledge_reset() {
  * Input:
  *   f - the file
  */
-void knowledge_write(FILE* f) {
-	node_t* what = head_what;
-	node_t* where = head_where;
-	node_t* who = head_who;
+void knowledge_write(FILE *f) {
+	node_t *what = head_what;
+	node_t *where = head_where;
+	node_t *who = head_who;
 
 	// Save "what" intent's entitiy-responses.
 	fprintf(f, "[what]\n");
