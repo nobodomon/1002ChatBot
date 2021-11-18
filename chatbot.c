@@ -192,11 +192,13 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	// Get the file path from the user input.
 	if (compare_token(inv[1], "from") == 0) {
 		// LOAD[0] from[1] /path/to/file[2]
-		strcpy(file_path, inv[2]);
+		strncpy(file_path, inv[2], strlen(inv[2]));
+		file_path[strlen(inv[2])] = 0;
 	}
 	else {
 		// LOAD[0] /path/to/file[1]
-		strcpy(file_path, inv[1]);
+		strncpy(file_path, inv[1], strlen(inv[1]));
+		file_path[strlen(inv[1])] = 0;
 	}
 
 	// Open the file in read mode.
@@ -274,7 +276,7 @@ int chatbot_do_question(int inc, char* inv[], char* response, int n) {
 
 	if (knowledge_get(inv[0], enti, response, n) == KB_NOTFOUND) {
 		safe_strcat(unsure, inv, inc, (MAX_RESPONSE - 1), 0);
-		strcat(unsure, "?");
+		strncat(unsure, "?", strlen("?") + 1);
 
 		prompt_user(ans, MAX_RESPONSE, "%s", unsure);
 		knowledge_put(inv[0], enti, ans);
@@ -365,11 +367,13 @@ int chatbot_do_save(int inc, char* inv[], char* response, int n) {
 		) {
 		// Save[0] to[1] /path/to/file[2]
 		// Save[0] as[1] /path/to/file[2]
-		strcpy(file_path, inv[2]);
+		strncpy(file_path, inv[2], strlen(inv[2]));
+		file_path[strlen(inv[2])] = 0;
 	}
 	else {
 		// save[0] /path/to/file[1]
-		strcpy(file_path, inv[1]);
+		strncpy(file_path, inv[1], strlen(inv[1]));
+		file_path[strlen(inv[1])] = 0;
 	}
 
 	// Open the file in write mode.
@@ -447,11 +451,11 @@ int chatbot_do_smalltalk(int inc, char* inv[], char* response, int n) {
 	const size_t how_question_count = sizeof(how_question) / sizeof(how_question[0]);
 
 	const size_t joke_count = sizeof(joke) / sizeof(joke[0]);
-	const size_t fun_fact_count = sizeof(how_response) / sizeof(how_response[0]);
-	const size_t something_cool_count = sizeof(how_question) / sizeof(how_question[0]);
+	const size_t fun_fact_count = sizeof(fun_fact) / sizeof(fun_fact[0]);
+	const size_t something_cool_count = sizeof(something_cool) / sizeof(something_cool[0]);
 
 	char* random_greetings, * random_how_response, * random_how_question, * random_joke, * random_fun_fact, * random_something_cool;
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 
 	size_t rand_int = (size_t)(rand() % 5);
 	random_greetings = greetings[rand() % greetings_count];
@@ -515,7 +519,14 @@ int chatbot_do_smalltalk(int inc, char* inv[], char* response, int n) {
 			safe_strcat(qns, inv, inc, (MAX_INPUT - 1), 0);
 			snprintf(response, n, "Think about it, %s?", qns);
 		}
-		else {
+		else { 
+			/*
+			 * rand_int can be 0, 1, 2, 5 at this point, random_can[>2] will be invalid, regenerate the random number so it is <2
+			 */
+			if(rand_int > 2)
+			{
+				rand_int = (size_t)(rand() % 3);
+			}
 			snprintf(response, n, "%s", random_can[rand_int]);
 		}
 	}
