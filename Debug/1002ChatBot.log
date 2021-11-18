@@ -12,5 +12,5 @@ D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(463,65): warn
 D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(465,41): warning C4090: '=': different 'const' qualifiers
 D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(466,53): warning C4090: '=': different 'const' qualifiers
 D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(467,71): warning C4090: '=': different 'const' qualifiers
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(590,14): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(582,14): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   1002ChatBot.vcxproj -> D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\Debug\1002ChatBot.exe

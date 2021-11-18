@@ -438,13 +438,13 @@ int chatbot_do_smalltalk(int inc, char* inv[], char* response, int n) {
 
 	const char* random_hi[] = { "Hi!", "Hello!", "Hello there!", "Hey hey~", "What's Up!!" };
 	const char* random_can[] = { "What do you think?", "Maybe I could!", "Well, it's either a yes or a no." };
-	const char* greetings[] = { "Hi!", "Hello!", "Hey~", "Hey there!", "Greetings", "Welcome!", "What's up?", "Howdy!", "Hi-ya~" };
+	const char* greetings[] = { "Hi!", "Hello!", "Hey~", "Hey there!", "Greetings", "Welcome!", "What\'s up?", "Howdy!", "Hi-ya~" };
 	const char* how_response[] = { "I'm good, thanks.", "Great!", "Great great, thanks.", "I'm doing well.", "Fine, thanks." };
 	const char* how_question[] = { "And you?", "How are you?", "How's everything?", "How's it going?" };
 
-	const char* joke[] = { "I can’t believe I got fired from the calendar factory. All I did was take a day off!", "Never trust atoms; they make up everything.", "I was wondering why the frisbee kept getting bigger and bigger, but then it hit me.", "I just got kicked out of a secret cooking society. I spilled the beans." };
-	const char* fun_fact[] = { "A shrimp's heart is in its head.", "Like fingerprints, everyone's tongue print is different.", "Almonds are a member of the peach family.", "A shark is the only known fish that can blink with both eyes." };
-	const char* something_cool[] = { "McDonald’s once made bubblegum-flavored broccoli.", "The first oranges were not orange.", "Bananas grow upside-down.", "Movie trailers originally played after the movie" };
+	const char* joke[] = { "I can\'t believe I got fired from the calendar factory. All I did was take a day off!", "Never trust atoms, they make up everything.", "I was wondering why the frisbee kept getting bigger and bigger, but then it hit me.", "I just got kicked out of a secret cooking society. I spilled the beans." };
+	const char* fun_fact[] = { "A shrimp\'s heart is in its head.", "Like fingerprints, everyone\'s tongue print is different.", "Almonds are a member of the peach family.", "A shark is the only known fish that can blink with both eyes." };
+	const char* something_cool[] = { "McDonald\'s once made bubblegum-flavored broccoli.", "The first oranges weren\'t orange.", "Bananas grow upside-down.", "Movie trailers originally played after the movie" };
 
 	const size_t greetings_count = sizeof(greetings) / sizeof(greetings[0]);
 	const size_t how_response_count = sizeof(how_response) / sizeof(how_response[0]);
@@ -492,14 +492,6 @@ int chatbot_do_smalltalk(int inc, char* inv[], char* response, int n) {
 		else {
 			snprintf(response, n, "Good day!");
 		}
-	}
-	else if (
-		compare_token("hello", inv[0]) == 0 ||
-		compare_token("hey", inv[0]) == 0 ||
-		compare_token("hi", inv[0]) == 0
-		) {
-		// SMALLTALK: "Hello" feature.
-		snprintf(response, n, "%s", random_hi[rand_int]);
 	}
 	else if (compare_token("can", inv[0]) == 0) {
 		// SMALLTALK: "Can" feature.
