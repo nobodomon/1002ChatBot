@@ -57,7 +57,7 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 		if (compare_token(entity, search->entity) == 0){
 			// Found response in knowledge base.
 			snprintf(response, n, "%s" , search->response);
-			result = KB_FOUND;
+			result = KB_OK;
 			break;
 		}
 		search = search->next;
@@ -181,7 +181,7 @@ int knowledge_read(FILE *f) {
 				f_response = strtok(NULL, "=");
 				result = knowledge_put(f_intent, f_entity, f_response);
 
-				if (result == KB_FOUND) {
+				if (result == KB_OK) {
 					// Increment the successful counter.
 					ctr++;
 				}

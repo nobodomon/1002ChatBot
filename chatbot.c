@@ -444,7 +444,7 @@ int chatbot_do_smalltalk(int inc, char* inv[], char* response, int n) {
 
 	const char* joke[] = { "I can’t believe I got fired from the calendar factory. All I did was take a day off!", "Never trust atoms; they make up everything.", "I was wondering why the frisbee kept getting bigger and bigger, but then it hit me.", "I just got kicked out of a secret cooking society. I spilled the beans." };
 	const char* fun_fact[] = { "A shrimp's heart is in its head.", "Like fingerprints, everyone's tongue print is different.", "Almonds are a member of the peach family.", "A shark is the only known fish that can blink with both eyes." };
-	const char* something_cool[] = { "McDonald’s once made bubblegum-flavored broccoli.", "The first oranges weren’t orange.", "Bananas grow upside-down.", "Movie trailers originally played after the movie" };
+	const char* something_cool[] = { "McDonald’s once made bubblegum-flavored broccoli.", "The first oranges were not orange.", "Bananas grow upside-down.", "Movie trailers originally played after the movie" };
 
 	const size_t greetings_count = sizeof(greetings) / sizeof(greetings[0]);
 	const size_t how_response_count = sizeof(how_response) / sizeof(how_response[0]);

@@ -143,7 +143,7 @@ int kb_update_what(node_t *new_node) {
 		// Append new_node to the linked list.
 		linkedlist_add(head_what, new_node);
 	}
-	return KB_FOUND;
+	return KB_OK;
 }
 
 
@@ -166,7 +166,7 @@ int kb_update_where(node_t *new_node) {
 		// Append new_node to the linked list.
 		linkedlist_add(head_where, new_node);
 	}
-	return KB_FOUND;
+	return KB_OK;
 }
 
 
@@ -189,5 +189,5 @@ int kb_update_who(node_t *new_node) {
 		// Append new_node to the linked list.
 		linkedlist_add(head_who, new_node);
 	}
-	return KB_FOUND;
+	return KB_OK;
 }

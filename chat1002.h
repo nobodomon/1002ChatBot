@@ -23,7 +23,7 @@
 #define MAX_RESPONSE 256
 
 /* return codes for knowledge_get() and knowledge_put() */
-#define KB_FOUND     0
+#define KB_OK     0
 #define KB_NOTFOUND -1
 #define KB_INVALID  -2
 #define KB_NOMEM    -3

@@ -46,17 +46,20 @@ int main(int argc, char *argv[]) {
 			fgets(input, MAX_INPUT, stdin);
 
 			/**
-			* [main.c] MODIFICATION
-			* If no newline is found, user input is larger
-			* than the buffer.
+			* If no newline or user input is larger than the buffer size.
 			*/
 			// Find newline and get the pointer to it.
-			char *nl = strchr(input, '\n');
-			if (nl != NULL) {
-				// newline found, replace it with null terminator.
-				*nl = '\0';
-			} else {
-				// Clear the remaining input.
+			char* nl = (char*)malloc(sizeof(char*));
+			int inputlen = strlen(input);
+			int i;
+			for (i = 0; i < inputlen+1; i++) {
+				if (input[i] == '\n') {
+					input[i] = '\0';
+					nl = &input[i];
+					break;
+				}
+			}
+			if (input[i] != '\0' || input[i] != '\n' && i == strlen(input) + 1) {
 				int c;
 				while ((c = getchar()) != '\n' && c != EOF) {
 					continue;
