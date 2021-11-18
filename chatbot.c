@@ -48,9 +48,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern node_t* head_what;
-extern node_t* head_where;
-extern node_t* head_who;
+extern entRespNode* head_what;
+extern entRespNode* head_where;
+extern entRespNode* head_who;
 
 
 /*
@@ -167,7 +167,12 @@ int chatbot_do_exit(int inc, char* inv[], char* response, int n) {
  *  0, otherwise
  */
 int chatbot_is_load(const char* intent) {
-	return compare_token(intent, "load") == 0;
+	if (compare_token(intent, "load") == 0) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 
@@ -231,9 +236,12 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
  */
 int chatbot_is_question(const char* intent) {
 
-	return compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0;
-
-	return 0;
+	if (compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
 
 }
 
@@ -298,11 +306,12 @@ int chatbot_do_question(int inc, char* inv[], char* response, int n) {
  *  0, otherwise
  */
 int chatbot_is_reset(const char* intent) {
-
-	return compare_token(intent, "reset") == 0;
-
-	return 0;
-
+	if (compare_token(intent, "reset") == 0) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 
@@ -337,10 +346,12 @@ int chatbot_do_reset(int inc, char* inv[], char* response, int n) {
  */
 int chatbot_is_save(const char* intent) {
 
-	return compare_token(intent, "save") == 0;
-
-	return 0;
-
+	if (compare_token(intent, "save") == 0) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
 
 
@@ -406,9 +417,9 @@ int chatbot_do_save(int inc, char* inv[], char* response, int n) {
  */
 int chatbot_is_smalltalk(const char* intent) {
 
-	const char* smalltalk[] = { "hi", "hello", "hey", "how are you?", "how's everything?", "how's it going?", "are you human?", "are you a robot?", "what is your name?", "who are you?" , "tell me something" , "what day is it today?" , "what is the current time?" , "what is the date today?" };
+	const char* smalltalk[] = { "hi", "hello", "hey", "how are you", "how's everything", "how's it going", "are you human", "are you a robot", "what is your name", "who are you" , "tell me something" , "1","2","3", "time","what is the current time" , "what is the date today",};
 
-	for (int i = 0; i < 14; i++)
+	for (int i = 0; i < 17; i++)
 	{
 		if (compare_token(intent, smalltalk[i]) == 0)
 		{
@@ -471,116 +482,59 @@ int chatbot_do_smalltalk(int inc, char* inv[], char* response, int n) {
 	{
 		snprintf(response, n, "%s", random_greetings);
 	}
-	else if (compare_token("how are you?", intent) == 0 || compare_token("how's everything?", intent) == 0 || compare_token("how's it going?", intent) == 0)
+	else if (compare_token("how are you", intent) == 0 || compare_token("how\'s everything?", intent) == 0 || compare_token("how\'s it going?", intent) == 0)
 	{
-		snprintf(response, n, "%s", random_how_response);
-		snprintf(response, n, "%s", random_how_question);
+		snprintf(response, n, "%s\n%s: %s",random_how_response,chatbot_botname(), random_how_question);
 	}
-	else if (compare_token("are you human?", intent) == 0 || compare_token("are you a robot?", intent) == 0)
+	else if (compare_token("are you human", intent) == 0 || compare_token("are you a robot?", intent) == 0)
 	{
 		snprintf(response, n, "I am a robot. Are you a robot?");
 	}
-	else if (compare_token("what is your name?", intent) == 0 || compare_token("who are you?", intent) == 0)
+	else if (compare_token("what is your name", intent) == 0 || compare_token("who are you?", intent) == 0)
 	{
 		snprintf(response, n, "I am chatty the chatbot.");
 	}
-	else if (compare_token("good", inv[0]) == 0) {
-		// SMALLTALK: "Good day" feature.
-		if (inc > 1) {
-			snprintf(response, n, "Good %s to you too!", inv[1]);
-		}
-		else {
-			snprintf(response, n, "Good day!");
-		}
-	}
-	else if (compare_token("can", inv[0]) == 0) {
-		// SMALLTALK: "Can" feature.
-		if (rand_int == 3) {
-			if (compare_token(inv[1], "you") == 0) {
-				snprintf(response, n, "I don't know, can I?");
-			}
-			else if (compare_token(inv[1], "i") == 0) {
-				snprintf(response, n, "I don't know, can you?");
-			}
-			else {
-				snprintf(response, n, "I don't know, can it?");
-			}
-		}
-		else if (rand_int == 4) {
-			char qns[MAX_INPUT] = "";
-			safe_strcat(qns, inv, inc, (MAX_INPUT - 1), 0);
-			snprintf(response, n, "Think about it, %s?", qns);
-		}
-		else { 
-			/*
-			 * rand_int can be 0, 1, 2, 5 at this point, random_can[>2] will be invalid, regenerate the random number so it is <2
-			 */
-			if(rand_int > 2)
-			{
-				rand_int = (size_t)(rand() % 3);
-			}
-			snprintf(response, n, "%s", random_can[rand_int]);
-		}
-	}
-	else if (
-		compare_token("it", inv[0]) == 0 ||
-		compare_token("its", inv[0]) == 0 ||
-		compare_token("it's", inv[0]) == 0
-		) {
-		// SMALLTALK: "It" feature.
-		snprintf(response, n, "Indeed it is.");
-	}
 	else if (compare_token("tell me something", intent) == 0)
 	{
-
-		int choice;
-
-		printf("What do you want to know?\n");
-		printf("[1] Tell me a joke\n");
-		printf("[2] Tell me a fun fact\n");
-		printf("[3] Tell me something cool\n");
-		printf("[4] Exit\n");
-
-		scanf_s("%d", &choice);
-
-		while (choice != 1 && choice != 2 && choice != 3 && choice != 4)
-		{
-			printf("Invalid!\n");
-
-			printf("What do you want to know?\n");
-			printf("[1] Tell me a joke\n");
-			printf("[2] Tell me a fun fact\n");
-			printf("[3] Tell me something cool\n");
-			printf("[4] Exit\n");
-
-			scanf_s("%d", &choice);
-		}
-
-		if (choice == 1)
-		{
-			snprintf(response, n, "%s", random_joke);
-		}
-		else if (choice == 2)
-		{
-			snprintf(response, n, "%s", random_fun_fact);
-		}
-		else if (choice == 3)
-		{
-			snprintf(response, n, "%s", random_something_cool);
-		}
-		else if (choice == 4)
-		{
-			return 0;
-		}
+		snprintf(response, n, "What do you want to know?\n[1] Tell me a joke\n[2] Tell me a fun fact\n[3] Tell me something cool");
 	}
-	else if (compare_token("what day is it today?", intent) == 0 || compare_token("what is the current time?", intent) == 0 || compare_token("what is the date today?", intent) == 0)
+	else if (compare_token("1", intent) == 0) {
+
+		snprintf(response, n, "%s", random_joke);
+	}else if(compare_token("2", intent) == 0) {
+
+		snprintf(response, n, "%s", random_fun_fact);
+	}
+	else if (compare_token("3", intent) == 0) {
+
+		snprintf(response, n, "%s", random_something_cool);
+	}
+	else if (compare_token("time", intent) == 0)
 	{
 		time_t rawtime;
 		struct tm* timeinfo;
 
 		time(&rawtime);
 		timeinfo = localtime(&rawtime);
-		snprintf(response, n, "[%d %d %d %d:%d:%d]", timeinfo->tm_mday, timeinfo->tm_mon + 1, timeinfo->tm_year + 1900, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+		char* months[] = { "January","February","March","April","May","June","July","August","September","November","December" };
+		char ampm[3];
+		int twelvehrformat = 0;
+		if (timeinfo->tm_hour >= 12) {
+			if (timeinfo->tm_hour == 12) {
+				twelvehrformat = timeinfo->tm_hour;
+			}
+			else {
+				twelvehrformat = timeinfo->tm_hour - 12;
+			}
+			strcpy(ampm, "PM");
+		}
+		else {
+			strcpy(ampm, "AM");
+		}
+		snprintf(response, n, "It is %d %s %d, %02d:%02d:%02d %s", timeinfo->tm_mday, months[timeinfo->tm_mon -1], timeinfo->tm_year + 1900, twelvehrformat, timeinfo->tm_min, timeinfo->tm_sec, ampm);
+	}
+	else {
+		return 0;
 	}
 
 	return 0;

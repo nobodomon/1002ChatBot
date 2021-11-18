@@ -1,16 +1,32 @@
 ﻿  chatbot.c
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(195,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(200,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(205,7): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(279,3): warning C4996: 'strncat': This function or variable may be unsafe. Consider using strncat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(370,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(375,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(380,7): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(461,56): warning C4090: '=': different 'const' qualifiers
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(462,65): warning C4090: '=': different 'const' qualifiers
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(463,65): warning C4090: '=': different 'const' qualifiers
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(465,41): warning C4090: '=': different 'const' qualifiers
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(466,53): warning C4090: '=': different 'const' qualifiers
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(467,71): warning C4090: '=': different 'const' qualifiers
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(582,14): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(205,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(210,7): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(287,3): warning C4996: 'strncat': This function or variable may be unsafe. Consider using strncat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(381,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(386,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(391,7): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(472,56): warning C4090: '=': different 'const' qualifiers
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(473,65): warning C4090: '=': different 'const' qualifiers
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(474,65): warning C4090: '=': different 'const' qualifiers
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(476,41): warning C4090: '=': different 'const' qualifiers
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(477,53): warning C4090: '=': different 'const' qualifiers
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(478,71): warning C4090: '=': different 'const' qualifiers
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(518,14): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(529,4): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\chatbot.c(532,4): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  kb.c
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\kb.c(23,25): warning C4018: '<': signed/unsigned mismatch
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\kb.c(33,4): warning C4996: 'strncat': This function or variable may be unsafe. Consider using strncat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\kb.c(37,5): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\kb.c(44,5): warning C4996: 'strncat': This function or variable may be unsafe. Consider using strncat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  knowledge.c
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\knowledge.c(91,28): warning C4090: 'function': different 'const' qualifiers
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\knowledge.c(165,16): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\knowledge.c(166,18): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  main.c
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\main.c(66,15): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\main.c(78,16): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Generating Code...
+D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\kb.c(169): warning C4715: 'kb_update': not all control paths return a value
   1002ChatBot.vcxproj -> D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\Debug\1002ChatBot.exe

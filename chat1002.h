@@ -29,11 +29,11 @@
 #define KB_NOMEM    -3
 
 /* Intent-Entity-Response struct. */
-typedef struct node_struct {
+typedef struct node {
 	char entity[MAX_ENTITY];
 	char response[MAX_RESPONSE];
-	struct node_struct *next; // Pointer to the next node in the linked list.
-} node_t;
+	struct node*next; // Pointer to the next node in the linked list.
+} entRespNode;
 
 /* functions defined in main.c */
 int compare_token(const char *token1, const char *token2);
@@ -65,19 +65,21 @@ void knowledge_write(FILE *f);
 
 /* Functions defined in kb.c */
 void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset);
-node_t * node_create(const char *entity, const char *resp);
-void linkedlist_add(node_t *head, node_t *node);
-void linkedlist_free(node_t *node);
-int kb_update_what(node_t *new_node);
-int kb_update_where(node_t *new_node);
-int kb_update_who(node_t *new_node);
-
+entRespNode* create_node(const char *entity, const char *response);
+void push_linkedList(entRespNode*head, entRespNode*node);
+void free_linkedList(entRespNode*node);
+int kb_update(char* intent, entRespNode* new_node);
+/*
+int kb_update_what(entRespNode*new_node);
+int kb_update_where(entRespNode*new_node);
+int kb_update_who(entRespNode*new_node);
+*/
 /*
 	Linked lists.
 	Use "extern" to mark external variable.
 */
-node_t *head_what;
-node_t *head_where;
-node_t *head_who;
+entRespNode*head_what;
+entRespNode*head_where;
+entRespNode*head_who;
 
 #endif

@@ -45,27 +45,21 @@ int main(int argc, char *argv[]) {
 			printf("%s: ", chatbot_username());
 			fgets(input, MAX_INPUT, stdin);
 
-			/**
+			/*
 			* If no newline or user input is larger than the buffer size.
 			*/
-			// Find newline and get the pointer to it.
-			char* nl = (char*)malloc(sizeof(char*));
-			int inputlen = strlen(input);
-			int i;
-			for (i = 0; i < inputlen+1; i++) {
-				if (input[i] == '\n') {
-					input[i] = '\0';
-					nl = &input[i];
-					break;
-				}
+			char* nl = strchr(input, '\n');
+			if (nl != NULL) {
+				// newline found, replace it with null terminator.
+				*nl = '\0';
 			}
-			if (input[i] != '\0' || input[i] != '\n' && i == strlen(input) + 1) {
+			else {
+				// Clears the excess characters if it exceeds buffer size.
 				int c;
-				while ((c = getchar()) != '\n' && c != EOF) {
-					continue;
-				}
+				do {
+					c = getchar();
+				} while ((c = getchar()) != '\n' && c != EOF);
 			}
-			/* End of modification. */
 
 			/* split it into words */
 			inc = 0;
@@ -152,11 +146,11 @@ void prompt_user(char *buf, int n, const char *format, ...) {
 	if (nl != NULL){
 		*nl = '\0';
 	}else {
-		// Clear the remaining input.
+		// Clears the excess characters if it exceeds buffer size.
 		int c;
-		while ((c = getchar()) != '\n' && c != EOF) {
-			continue;
-		}
+		do {
+			c = getchar();
+		} while ((c = getchar()) != '\n' && c != EOF);
 	
 	/* End of modification. */
 	}

@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "chat1002.h"
-extern node_t *head_what;
-extern node_t *head_where;
-extern node_t *head_who;
+extern entRespNode*head_what;
+extern entRespNode*head_where;
+extern entRespNode*head_who;
 
 
 void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset) {
@@ -34,7 +34,7 @@ void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset)
 
 			if (i != (src_size - 1)) {
 				// Add a space between words.
-				strcat(dest, " ");
+				strncat(dest, ' ',1);
 			}
 		} else {
 			// Not enough space to store the current string.
@@ -54,7 +54,7 @@ void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset)
 }
 
 
-node_t * node_create(const char *entity, const char *resp) {
+entRespNode* create_node(const char *entity, const char *response) {
 	/*
 		This function creates a node.
 
@@ -66,7 +66,7 @@ node_t * node_create(const char *entity, const char *resp) {
 			node	[node_t *]:	The newly created node.
 			NULL	[NULL]:		Returns NULL if memory allocation fails.
 	*/
-	node_t *node = malloc(sizeof(node_t));
+	entRespNode*node = malloc(sizeof(entRespNode));
 
 	if (node == NULL) {
 		printf("[!] Memory allocation failure.\n");
@@ -74,47 +74,47 @@ node_t * node_create(const char *entity, const char *resp) {
 	}
 
 	snprintf(node->entity, MAX_ENTITY, "%s", entity);
-	snprintf(node->response, MAX_RESPONSE, "%s", resp);
+	snprintf(node->response, MAX_RESPONSE, "%s", response);
 	node->next = NULL;
 
 	return node;
 }
 
 
-void linkedlist_add(node_t *head, node_t *node) {
+void push_linkedList(entRespNode*head, entRespNode*node) {
 	/*
 		This function adds a new node to a linked list.
 
 		Arguments:
-			head 	[node_t *]:	The head node of the linked list.
-			node 	[node_t *]:	The new node to add to the linked list.
+			head 	[entRespNode *]:	The head of the linked list
+			node 	[entRespNode *]:	The node to add into the linked list.
 	*/
-	node_t *current = head;
+	entRespNode*currNode = head;
 
-	while (current != NULL) {
-		if (compare_token(current->entity, node->entity) == 0) {
+	do{
+		if (compare_token(currNode->entity, node->entity) == 0) {
 			// Entity already exist. Overwrite the response.
-			snprintf(current->response, MAX_RESPONSE, "%s", node->response);
+			snprintf(currNode->response, MAX_RESPONSE, "%s", node->response);
 			break;
-		} else if (current->next == NULL) {
+		} else if (currNode->next == NULL) {
 			// End of linked list.
-			current->next = node;
+			currNode->next = node;
 			break;
 		}
 		// Update the pointer.
-		current = current->next;
-	}
+		currNode = currNode->next;
+	} while (currNode != NULL);
 }
 
 
-void linkedlist_free(node_t *node) {
+void free_linkedList(entRespNode*node) {
 	/*
 		This function attempts to free up all nodes in a linked list.
 
 		Arguments:
 			node 	[node_t *]:	The head node of the linked list.
 	*/
-	node_t *current;
+	entRespNode*current;
 
 	while (node != NULL) {
 		current = node;
@@ -123,71 +123,47 @@ void linkedlist_free(node_t *node) {
 	}
 }
 
-
-int kb_update_what(node_t *new_node) {
-	/*
-		This function adds a new node to the "what" knowledge base.
-
-		Arguments:
-			new_node 	[node_t *]:	The new node to add to the knowledge base.
-	*/
+int kb_update(char* intent, entRespNode* new_node) {
 	if (new_node == NULL) {
-		// Failed to allocate memory.
+		//memory allocation for new node failed
 		return KB_NOMEM;
 	}
-
-	if (head_what == NULL) {
-		// Linked list is empty, new_node shall be the first node in the list.
-		head_what = new_node;
-	} else {
-		// Append new_node to the linked list.
-		linkedlist_add(head_what, new_node);
+	// if the intent is "What"
+	else if (compare_token(intent, "what") == 0) {
+		if (head_what == NULL) {
+			// set head to new node if head of linkedlist what is empty
+			head_what = new_node;
+		}
+		else {
+			// Append new_node to the linked list.
+			push_linkedList(head_what, new_node);
+		}
+		return KB_OK;
 	}
-	return KB_OK;
-}
-
-
-int kb_update_where(node_t *new_node) {
-	/*
-		This function adds a new node to the "where" knowledge base.
-
-		Arguments:
-			new_node 	[node_t *]:	The new node to add to the knowledge base.
-	*/
-	if (new_node == NULL) {
-		// Failed to allocate memory.
-		return KB_NOMEM;
+	// if the intent is "Where"
+	else if (compare_token(intent, "where") == 0) {
+		if (head_where == NULL) {
+			// set head to new node if head of linkedlist where is empty
+			head_where = new_node;
+		}
+		else {
+			// Append new_node to the linked list.
+			push_linkedList(head_where, new_node);
+		}
+		return KB_OK;
 	}
-
-	if (head_where == NULL) {
-		// Linked list is empty, new_node shall be the first node in the list.
-		head_where = new_node;
-	} else {
-		// Append new_node to the linked list.
-		linkedlist_add(head_where, new_node);
+	// if the intent is "Who"
+	else if (compare_token(intent, "who") == 0) {
+		if (head_who == NULL) {
+			// set head to new node if head of linkedlist who is empty
+			head_who = new_node;
+		}
+		else {
+			// Append new_node to the linked list.
+			push_linkedList(head_who, new_node);
+		}
+		return KB_OK;
 	}
-	return KB_OK;
-}
-
-
-int kb_update_who(node_t *new_node) {
-	/*
-		This function adds a new node to the "who" knowledge base.
-
-		Arguments:
-			new_node 	[node_t *]:	The new node to add to the knowledge base.
-	*/
-	if (new_node == NULL) {
-		// Failed to allocate memory.
-		return KB_NOMEM;
+	else {
 	}
-
-	if (head_who == NULL) {
-		// Linked list is empty, new_node shall be the first node in the list.
-		head_who = new_node;
-	} else {
-		// Append new_node to the linked list.
-		linkedlist_add(head_who, new_node);
-	}
-	return KB_OK;
 }
