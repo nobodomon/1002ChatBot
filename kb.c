@@ -34,7 +34,7 @@ void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset)
 
 			if (i != (src_size - 1)) {
 				// Add a space between words.
-				strncat(dest, ' ',1);
+				strcat(dest," ");
 			}
 		} else {
 			// Not enough space to store the current string.
