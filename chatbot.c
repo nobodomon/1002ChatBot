@@ -190,34 +190,38 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 		fp:		The file pointer.
 		ctr:	The number of successful results retrieved from the file.
 	*/
-	FILE* fp;
-	int ctr = 0;
+	FILE* file_ptr;
 	char file_path[MAX_INPUT];
 
 	// Get the file path from the user input.
 	if (compare_token(inv[1], "from") == 0) {
-		// LOAD[0] from[1] /path/to/file[2]
+		// LOAD[0] from[1] /file.txt[2]
 		strncpy(file_path, inv[2], strlen(inv[2]));
 		file_path[strlen(inv[2])] = 0;
 	}
+	else if (compare_token(inv[1], "the") == 0 && compare_token(inv[2], "file") == 0) {
+		// LOAD[0] the[1] file[2] /file.txt[3]
+		strncpy(file_path, inv[3], strlen(inv[3]));
+		file_path[strlen(inv[3])] = 0;
+	}
 	else {
-		// LOAD[0] /path/to/file[1]
+		// LOAD[0] /file.txt[1]
 		strncpy(file_path, inv[1], strlen(inv[1]));
 		file_path[strlen(inv[1])] = 0;
 	}
 
-	// Open the file in read mode.
-	fp = fopen(file_path, "r");
+	// Open the file indicated by user in read mode.
+	file_ptr = fopen(file_path, "r");
 
-	if (fp != NULL) {
-		// File exists.
-		ctr = knowledge_read(fp);
-		fclose(fp);
-		snprintf(response, n, "I have loaded %d results from the knowledge base [%s].", ctr, file_path);
+	if (file_ptr != NULL) {
+		knowledge_read(file_ptr);
+		// Print if file exists.
+		fclose(file_ptr);
+		snprintf(response, n, "I have regained my memories by reading the file '[%s]', much thanks!", file_path);
 	}
 	else {
-		// File does not exist.
-		snprintf(response, n, "Sorry, I can't load the knowledge base [%s].", file_path);
+		// Print if file does not exist or cannot be found.
+		snprintf(response, n, "Unfortunately, I cannot read the file '[%s]'.", file_path);
 	}
 
 	return 0;
@@ -273,16 +277,14 @@ int chatbot_do_question(int inc, char* inv[], char* response, int n) {
 	size_t offset = 1;
 
 	// Check where does the question start.
-	if (
-		compare_token(inv[1], "is") == 0 ||
-		compare_token(inv[1], "are") == 0
-		) {
+	if (compare_token(inv[1], "is") == 0 || compare_token(inv[1], "are") == 0) {
 		offset = 2;
 	}
 
 	safe_strcat(enti, inv, inc, (MAX_ENTITY - 1), offset);
 
 	if (knowledge_get(inv[0], enti, response, n) == KB_NOTFOUND) {
+		inv[0][0] = toupper(inv[0][0]);
 		safe_strcat(unsure, inv, inc, (MAX_RESPONSE - 1), 0);
 		strncat(unsure, "?", strlen("?") + 1);
 
