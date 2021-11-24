@@ -1,5 +1,5 @@
 [what]
-sit=school of it
+sit=my school
 
 [where]
 

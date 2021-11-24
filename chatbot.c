@@ -387,25 +387,24 @@ int chatbot_do_save(int inc, char* inv[], char* response, int n) {
 		file_path[strlen(inv[1])] = 0;
 	}
 
+	//Open file in read mode to check if it exists.
 	FILE* temp;
 	temp = fopen(file_path, "r");
+
 	char check[MAX_INPUT] = "";
 
+	// Check if file already exists. If it does, check if user wants to overwrite.
 	if (temp) {
 		fclose(temp);
 
-		// File exists.
 		printf("%s: The file '[%s]' already exists. Do you want to overwrite the existing file?\n", chatbot_botname(), file_path);
-
 		printf("%s:", chatbot_username());
 		fgets(check, MAX_INPUT, stdin);
 		check[strlen(check)-1] = '\0';
 
 		if (compare_token(check, "overwrite") == 0 || compare_token(check, "yes") == 0) {
-			// Open the file in write mode.
+			// Open the file in write mode and saves file.
 			file_ptr = fopen(file_path, "w");
-
-			// File exists.
 			knowledge_write(file_ptr);
 
 			snprintf(response, n, "I have written down my memories to '[%s]'.", file_path);
@@ -415,14 +414,18 @@ int chatbot_do_save(int inc, char* inv[], char* response, int n) {
 			return 0;
 		}
 		else {
+			// If user says no to overwrite, don't save.
 			snprintf(response, n, "My knowledge has not been saved.");
 
 			return 0;
 		}
 	}
 	else {
-		// File does not exist.
-		snprintf(response, n, "Unfortunately, I cannot record my memories to the file '[%s]'.", file_path);
+		// File does not already exist. Writes and saves file.
+		file_ptr = fopen(file_path, "w");
+		knowledge_write(file_ptr);
+		snprintf(response, n, "I have written down my memories to '[%s]'.", file_path);
+		fclose(file_ptr);
 
 		return 0;
 	}

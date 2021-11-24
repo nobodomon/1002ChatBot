@@ -9,13 +9,14 @@ C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(381,3): warning C4996: '
 C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(386,3): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(391,9): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
 C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(406,15): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(515,56): warning C4090: '=': different 'const' qualifiers
-C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(516,65): warning C4090: '=': different 'const' qualifiers
-C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(517,65): warning C4090: '=': different 'const' qualifiers
-C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(519,41): warning C4090: '=': different 'const' qualifiers
-C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(520,53): warning C4090: '=': different 'const' qualifiers
-C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(521,71): warning C4090: '=': different 'const' qualifiers
-C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(561,14): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(572,4): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(575,4): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(425,14): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(500,56): warning C4090: '=': different 'const' qualifiers
+C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(501,65): warning C4090: '=': different 'const' qualifiers
+C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(502,65): warning C4090: '=': different 'const' qualifiers
+C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(504,41): warning C4090: '=': different 'const' qualifiers
+C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(505,53): warning C4090: '=': different 'const' qualifiers
+C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(506,71): warning C4090: '=': different 'const' qualifiers
+C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(546,14): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(557,4): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Soh Wen Yue\source\repos\1002ChatBot\chatbot.c(560,4): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   1002ChatBot.vcxproj -> C:\Users\Soh Wen Yue\source\repos\1002ChatBot\Debug\1002ChatBot.exe
