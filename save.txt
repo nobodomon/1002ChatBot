@@ -1,5 +1,5 @@
 [what]
-sit=my house
+sit=school of it
 
 [where]
 

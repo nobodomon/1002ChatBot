@@ -266,13 +266,13 @@ int chatbot_is_question(const char* intent) {
 int chatbot_do_question(int inc, char* inv[], char* response, int n) {
 
 	/*
-		unsure:		A string for unsure questions.
-		enti:		A string to store the entity.
-		ans:		A string to store the answer to the question.
+		unknown:	Store text for unknown questions.
+		ent:		Store text for the entity.
+		reply:		Store text for the reply to the question.
 	*/
-	char unsure[MAX_RESPONSE] = "I don't know. ";
-	char enti[MAX_ENTITY] = "";
-	char ans[MAX_RESPONSE] = "";
+	char unknown[MAX_RESPONSE] = "I don't know. ";
+	char ent[MAX_ENTITY] = "";
+	char reply[MAX_RESPONSE] = "";
 
 	size_t offset = 1;
 
@@ -281,16 +281,16 @@ int chatbot_do_question(int inc, char* inv[], char* response, int n) {
 		offset = 2;
 	}
 
-	safe_strcat(enti, inv, inc, (MAX_ENTITY - 1), offset);
+	safe_strcat(ent, inv, inc, (MAX_ENTITY - 1), offset);
 
-	if (knowledge_get(inv[0], enti, response, n) == KB_NOTFOUND) {
+	if (knowledge_get(inv[0], ent, response, n) == KB_NOTFOUND) {
 		inv[0][0] = toupper(inv[0][0]);
-		safe_strcat(unsure, inv, inc, (MAX_RESPONSE - 1), 0);
-		strncat(unsure, "?", strlen("?") + 1);
+		safe_strcat(unknown, inv, inc, (MAX_RESPONSE - 1), 0);
+		strncat(unknown, "?", strlen("?") + 1);
 
-		prompt_user(ans, MAX_RESPONSE, "%s", unsure);
-		knowledge_put(inv[0], enti, ans);
-		snprintf(response, n, "Thank you.");
+		prompt_user(reply, MAX_RESPONSE, "%s", unknown);
+		knowledge_put(inv[0], ent, reply);
+		snprintf(response, n, "Thank you for teaching me.");
 	}
 
 	return 0;
@@ -329,9 +329,10 @@ int chatbot_is_reset(const char* intent) {
 int chatbot_do_reset(int inc, char* inv[], char* response, int n) {
 	// Reseed the random number generator.
 	srand((unsigned)(time(NULL)));
+
 	// Reset the knowledge base in memory.
 	knowledge_reset();
-	snprintf(response, n, "I have reset my knowledge for this session.");
+	snprintf(response, n, "Beep Boop. I have been resetted.");
 	return 0;
 }
 
@@ -368,41 +369,63 @@ int chatbot_is_save(const char* intent) {
  */
 int chatbot_do_save(int inc, char* inv[], char* response, int n) {
 	/*
-		fp:		The file pointer.
+		file_ptr:		A pointer to the file.
 	*/
-	FILE* fp;
+	FILE* file_ptr;
 	char file_path[MAX_INPUT];
 
 	// Get the file path from the user input.
-	if (
-		compare_token(inv[1], "to") == 0 ||
-		compare_token(inv[1], "as") == 0
-		) {
-		// Save[0] to[1] /path/to/file[2]
-		// Save[0] as[1] /path/to/file[2]
+	if (compare_token(inv[1], "to") == 0 || compare_token(inv[1], "as") == 0) {
+		// Save[0] to[1] /file.txt[2] or Save[0] as[1] /file.txt[2]
+
 		strncpy(file_path, inv[2], strlen(inv[2]));
 		file_path[strlen(inv[2])] = 0;
 	}
 	else {
-		// save[0] /path/to/file[1]
+		// save[0] /file.txt[1]
 		strncpy(file_path, inv[1], strlen(inv[1]));
 		file_path[strlen(inv[1])] = 0;
 	}
 
-	// Open the file in write mode.
-	fp = fopen(file_path, "w");
+	FILE* temp;
+	temp = fopen(file_path, "r");
+	char check[MAX_INPUT] = "";
 
-	if (fp != NULL) {
+	if (temp) {
+		fclose(temp);
+
 		// File exists.
-		knowledge_write(fp);
-		fclose(fp);
-		snprintf(response, n, "I have saved the results from the knowledge base to [%s].", file_path);
+		printf("%s: The file '[%s]' already exists. Do you want to overwrite the existing file?\n", chatbot_botname(), file_path);
+
+		printf("%s:", chatbot_username());
+		fgets(check, MAX_INPUT, stdin);
+		check[strlen(check)-1] = '\0';
+
+		if (compare_token(check, "overwrite") == 0 || compare_token(check, "yes") == 0) {
+			// Open the file in write mode.
+			file_ptr = fopen(file_path, "w");
+
+			// File exists.
+			knowledge_write(file_ptr);
+
+			snprintf(response, n, "I have written down my memories to '[%s]'.", file_path);
+
+			fclose(file_ptr);
+
+			return 0;
+		}
+		else {
+			snprintf(response, n, "My knowledge has not been saved.");
+
+			return 0;
+		}
 	}
 	else {
 		// File does not exist.
-		snprintf(response, n, "Sorry, I can't save the knowledge base to [%s].", file_path);
+		snprintf(response, n, "Unfortunately, I cannot record my memories to the file '[%s]'.", file_path);
+
+		return 0;
 	}
-	return 0;
 }
 
 
