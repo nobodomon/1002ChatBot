@@ -187,8 +187,7 @@ int chatbot_is_load(const char* intent) {
  */
 int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	/*
-		fp:		The file pointer.
-		ctr:	The number of successful results retrieved from the file.
+		file_ptr:		The file pointer.
 	*/
 	FILE* file_ptr;
 	char file_path[MAX_INPUT];
@@ -322,7 +321,7 @@ int chatbot_do_question(int inc, char* inv[], char* response, int n) {
 		ent:		Store text for the entity.
 		reply:		Store text for the reply to the question.
 	*/
-	char unknown[MAX_RESPONSE] = "I don't know. ";
+	char unknown[MAX_RESPONSE] = "I don't know the answer to that question. ";
 	char ent[MAX_ENTITY] = "";
 	char reply[MAX_RESPONSE] = "";
 
@@ -342,7 +341,7 @@ int chatbot_do_question(int inc, char* inv[], char* response, int n) {
 
 		prompt_user(reply, MAX_RESPONSE, "%s", unknown);
 		knowledge_put(inv[0], ent, reply);
-		snprintf(response, n, "Thank you for teaching me.");
+		snprintf(response, n, "Thank you for teaching me!");
 	}
 
 	return 0;
@@ -382,7 +381,7 @@ int chatbot_do_reset(int inc, char* inv[], char* response, int n) {
 	// Reseed the random number generator.
 	srand((unsigned)(time(NULL)));
 
-	// Reset the knowledge base in memory.
+	// Reset the chatbot's knowledge.
 	knowledge_reset();
 	snprintf(response, n, "Beep Boop. I have been resetted.");
 	return 0;
@@ -425,16 +424,30 @@ int chatbot_do_save(int inc, char* inv[], char* response, int n) {
 	*/
 	FILE* file_ptr;
 	char file_path[MAX_INPUT];
+	char* point;
+	char format[5] = ".txt";
+	format[strlen(format)] = '\0';
 
 	// Get the file path from the user input.
 	if (compare_token(inv[1], "to") == 0 || compare_token(inv[1], "as") == 0) {
 		// Save[0] to[1] /file.txt[2] or Save[0] as[1] /file.txt[2]
 
+		// If user did not indicate file type, set it as a '.txt'.
+		if ((point = strrchr(inv[2], '.')) == NULL) {
+			strcat(inv[2], format);
+		}
+
 		strncpy(file_path, inv[2], strlen(inv[2]));
 		file_path[strlen(inv[2])] = 0;
 	}
 	else {
-		// save[0] /file.txt[1]
+		// Save[0] /file.txt[1]
+
+		// If user did not indicate file type, set it as a '.txt'.
+		if ((point = strrchr(inv[1], '.')) == NULL) {
+			strcat(inv[1], format);
+		}
+
 		strncpy(file_path, inv[1], strlen(inv[1]));
 		file_path[strlen(inv[1])] = 0;
 	}
