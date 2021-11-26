@@ -68,12 +68,8 @@ void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset)
 entRespNode* create_node(const char *entity, const char *response);
 void push_linkedList(entRespNode*head, entRespNode*node);
 void free_linkedList(entRespNode*node);
-int kb_update(char* intent, entRespNode* new_node);
-/*
-int kb_update_what(entRespNode*new_node);
-int kb_update_where(entRespNode*new_node);
-int kb_update_who(entRespNode*new_node);
-*/
+int knowledge_update(char* intent, entRespNode* new_node);
+
 /*
 	Linked lists.
 	Use "extern" to mark external variable.

@@ -192,6 +192,10 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	FILE* file_ptr;
 	char file_path[MAX_INPUT];
 
+	char* point;
+	char format[5] = ".ini";
+	format[strlen(format)] = '\0';
+
 	// Get the file path from the user input.
 	if (inv[1] == NULL) {
 		// If the load statement has 1 word. If file not stated, prompt user for filename.
@@ -202,6 +206,11 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 		printf("%s:", chatbot_username());
 		fgets(tempFilePath, MAX_INPUT, stdin);
 		tempFilePath[strlen(tempFilePath) - 1] = '\0';
+
+		// If user did not indicate file type, default it as a '.ini'.
+		if ((point = strrchr(tempFilePath, '.')) == NULL) {
+			strcat(tempFilePath, format);
+		}
 
 		strncpy(file_path, tempFilePath, strlen(tempFilePath));
 		file_path[strlen(tempFilePath)] = 0;
@@ -218,11 +227,21 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 			fgets(tempFilePath, MAX_INPUT, stdin);
 			tempFilePath[strlen(tempFilePath) - 1] = '\0';
 
+			// If user did not indicate file type, default it as a '.ini'.
+			if ((point = strrchr(tempFilePath, '.')) == NULL) {
+				strcat(tempFilePath, format);
+			}
+
 			strncpy(file_path, tempFilePath, strlen(tempFilePath));
 			file_path[strlen(tempFilePath)] = 0;
 		}
 		else if (compare_token(inv[0], "load") == 0 && inv[1] != NULL) {
 			// LOAD[0] /file.txt[1]
+
+			// If user did not indicate file type, default it as a '.ini'.
+			if ((point = strrchr(inv[1], '.')) == NULL) {
+				strcat(inv[1], format);
+			}
 
 			strncpy(file_path, inv[1], strlen(inv[1]));
 			file_path[strlen(inv[1])] = 0;
@@ -240,11 +259,21 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 			fgets(tempFilePath, MAX_INPUT, stdin);
 			tempFilePath[strlen(tempFilePath) - 1] = '\0';
 
+			// If user did not indicate file type, default it as a '.ini'.
+			if ((point = strrchr(tempFilePath, '.')) == NULL) {
+				strcat(tempFilePath, format);
+			}
+
 			strncpy(file_path, tempFilePath, strlen(tempFilePath));
 			file_path[strlen(tempFilePath)] = 0;
 		}
 		else if (compare_token(inv[0], "load") == 0 && compare_token(inv[1], "from") == 0) {
 			// LOAD[0] from[1] /file.txt[2]
+
+			// If user did not indicate file type, default it as a '.ini'.
+			if ((point = strrchr(inv[2], '.')) == NULL) {
+				strcat(inv[2], format);
+			}
 
 			strncpy(file_path, inv[2], strlen(inv[2]));
 			file_path[strlen(inv[2])] = 0;
@@ -255,6 +284,11 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 
 		if (compare_token(inv[1], "the") == 0 && compare_token(inv[2], "file") == 0) {
 			// LOAD[0] the[1] file[2] /file.txt[3]
+
+			// If user did not indicate file type, default it as a '.ini'.
+			if ((point = strrchr(inv[3], '.')) == NULL) {
+				strcat(inv[3], format);
+			}
 
 			strncpy(file_path, inv[3], strlen(inv[3]));
 			file_path[strlen(inv[3])] = 0;
@@ -424,15 +458,16 @@ int chatbot_do_save(int inc, char* inv[], char* response, int n) {
 	*/
 	FILE* file_ptr;
 	char file_path[MAX_INPUT];
+
 	char* point;
-	char format[5] = ".txt";
+	char format[5] = ".ini";
 	format[strlen(format)] = '\0';
 
 	// Get the file path from the user input.
 	if (compare_token(inv[1], "to") == 0 || compare_token(inv[1], "as") == 0) {
 		// Save[0] to[1] /file.txt[2] or Save[0] as[1] /file.txt[2]
 
-		// If user did not indicate file type, set it as a '.txt'.
+		// If user did not indicate file type, set it as a '.ini'.
 		if ((point = strrchr(inv[2], '.')) == NULL) {
 			strcat(inv[2], format);
 		}
@@ -443,7 +478,7 @@ int chatbot_do_save(int inc, char* inv[], char* response, int n) {
 	else {
 		// Save[0] /file.txt[1]
 
-		// If user did not indicate file type, set it as a '.txt'.
+		// If user did not indicate file type, set it as a '.ini'.
 		if ((point = strrchr(inv[1], '.')) == NULL) {
 			strcat(inv[1], format);
 		}

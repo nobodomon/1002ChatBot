@@ -88,7 +88,7 @@ int knowledge_put(const char *intent, const char *entity, const char *response) 
 
 	if (compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0) {
 		// Intent is what.
-		result = kb_update(intent,create_node(entity, response));
+		result = knowledge_update(intent,create_node(entity, response));
 	} else {
 		// Invalid intent.
 		result = KB_INVALID;

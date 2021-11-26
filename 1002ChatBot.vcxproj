@@ -100,7 +100,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="chatbot.c" />
-    <ClCompile Include="kb.c" />
+    <ClCompile Include="util.c" />
     <ClCompile Include="knowledge.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>

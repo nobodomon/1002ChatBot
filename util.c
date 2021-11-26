@@ -7,9 +7,36 @@ extern entRespNode*where_header;
 extern entRespNode*who_header;
 
 
+entRespNode* create_node(const char* entity, const char* response) {
+	/*
+		This function creates a node for the linked list.
+
+		Arguments:
+			entity 	[char *]:	The entity.
+			resp 	[char *]:	The response.
+
+		Returns:
+			node	[node_t *]:	The newly created node.
+			NULL	[NULL]:		Returns NULL if memory allocation fails.
+	*/
+	entRespNode* node = malloc(sizeof(entRespNode));
+
+	if (node == NULL) {
+		printf("!! Memory allocation failure.\n");
+		return NULL;
+	}
+
+	snprintf(node->entity, MAX_ENTITY, "%s", entity);
+	snprintf(node->response, MAX_RESPONSE, "%s", response);
+	node->next = NULL;
+
+	return node;
+}
+
+
 void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset) {
 	/*
-		This function safely concatenates an array of strings.
+		This function safely concatenates an array of strings to make it does not overrun the given memory space.
 
 		Arguments:
 			dest 		[char *]:	The pointer to the destination.
@@ -54,54 +81,28 @@ void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset)
 }
 
 
-entRespNode* create_node(const char *entity, const char *response) {
-	/*
-		This function creates a node.
-
-		Arguments:
-			entity 	[char *]:	The entity.
-			resp 	[char *]:	The response.
-
-		Returns:
-			node	[node_t *]:	The newly created node.
-			NULL	[NULL]:		Returns NULL if memory allocation fails.
-	*/
-	entRespNode*node = malloc(sizeof(entRespNode));
-
-	if (node == NULL) {
-		printf("[!] Memory allocation failure.\n");
-		return NULL;
-	}
-
-	snprintf(node->entity, MAX_ENTITY, "%s", entity);
-	snprintf(node->response, MAX_RESPONSE, "%s", response);
-	node->next = NULL;
-
-	return node;
-}
-
-
 void push_linkedList(entRespNode*head, entRespNode*node) {
 	/*
 		This function adds a new node to a linked list.
 
 		Arguments:
-			head 	[entRespNode *]:	The head of the linked list
-			node 	[entRespNode *]:	The node to add into the linked list.
+			head 		[entRespNode *]:	The head of the linked list
+			node 		[entRespNode *]:	The node to add into the linked list.
+			currNode 	[entRespNode *]:	Temp node that points to existing nodes in the linked list.
 	*/
 	entRespNode*currNode = head;
 
 	do{
 		if (compare_token(currNode->entity, node->entity) == 0) {
-			// Entity already exist. Overwrite the response.
+			// Entity already exist. Node not added to the linked list.
 			snprintf(currNode->response, MAX_RESPONSE, "%s", node->response);
 			break;
 		} else if (currNode->next == NULL) {
-			// End of linked list.
+			// End of linked list. Add the new node to the linked list.
 			currNode->next = node;
 			break;
 		}
-		// Update the pointer.
+		// Update the temp pointer.
 		currNode = currNode->next;
 	} while (currNode != NULL);
 }
@@ -109,10 +110,11 @@ void push_linkedList(entRespNode*head, entRespNode*node) {
 
 void free_linkedList(entRespNode*node) {
 	/*
-		This function attempts to free up all nodes in a linked list.
+		This function free up all nodes in a linked list.
 
 		Arguments:
-			node 	[node_t *]:	The head node of the linked list.
+			node 		[node_t *]:			The head node of the linked list.
+			currNode 	[entRespNode *]:	Temp node that points to existing nodes in the linked list.
 	*/
 	entRespNode*current;
 
@@ -123,12 +125,20 @@ void free_linkedList(entRespNode*node) {
 	}
 }
 
-int kb_update(char* intent, entRespNode* new_node) {
+int knowledge_update(char* intent, entRespNode* new_node) {
+	/*
+		This function checks where the statement is 'what', 'where', or 'who', then add the new node to the appropriate linked list.
+
+		Arguments:
+			intent 		[char *]:			The intent of the statement.
+			new_node 	[entRespNode *]:	The new node to be added to the linked list.
+	*/
+
 	if (new_node == NULL) {
 		//memory allocation for new node failed
 		return KB_NOMEM;
 	}
-	// if the intent is "What"
+	// If the intent is "What"
 	else if (compare_token(intent, "what") == 0) {
 		if (what_header == NULL) {
 			// set head to new node if head of linkedlist what is empty
@@ -140,7 +150,7 @@ int kb_update(char* intent, entRespNode* new_node) {
 		}
 		return KB_OK;
 	}
-	// if the intent is "Where"
+	// If the intent is "Where"
 	else if (compare_token(intent, "where") == 0) {
 		if (where_header == NULL) {
 			// set head to new node if head of linkedlist where is empty
@@ -152,7 +162,7 @@ int kb_update(char* intent, entRespNode* new_node) {
 		}
 		return KB_OK;
 	}
-	// if the intent is "Who"
+	// If the intent is "Who"
 	else if (compare_token(intent, "who") == 0) {
 		if (who_header == NULL) {
 			// set head to new node if head of linkedlist who is empty
@@ -163,7 +173,5 @@ int kb_update(char* intent, entRespNode* new_node) {
 			push_linkedList(who_header, new_node);
 		}
 		return KB_OK;
-	}
-	else {
 	}
 }
