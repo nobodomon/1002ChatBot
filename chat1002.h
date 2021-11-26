@@ -78,8 +78,8 @@ int kb_update_who(entRespNode*new_node);
 	Linked lists.
 	Use "extern" to mark external variable.
 */
-entRespNode*head_what;
-entRespNode*head_where;
-entRespNode*head_who;
+entRespNode*what_header;
+entRespNode*where_header;
+entRespNode*who_header;
 
 #endif

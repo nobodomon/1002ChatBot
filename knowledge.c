@@ -16,9 +16,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "chat1002.h"
-extern entRespNode*head_what;
-extern entRespNode*head_where;
-extern entRespNode*head_who;
+extern entRespNode*what_header;
+extern entRespNode*where_header;
+extern entRespNode*who_header;
 
 /*
  * Get the response to a question.
@@ -41,13 +41,13 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
 
 	if (compare_token(intent, "what") == 0) {
 		// Intent is what.
-		search = head_what;
+		search = what_header;
 	} else if (compare_token(intent, "where") == 0) {
 		// Intent is where.
-		search = head_where;
+		search = where_header;
 	} else if (compare_token(intent, "who") == 0) {
 		// Intent is who.
-		search = head_who;
+		search = who_header;
 	} else {
 		// Invalid intent.
 		return KB_INVALID;
@@ -182,13 +182,13 @@ int knowledge_read(FILE *f) {
  * Reset the knowledge base, removing all know entitities from all intents.
  */
 void knowledge_reset() {
-	free_linkedList(head_what);
-	free_linkedList(head_where);
-	free_linkedList(head_who);
+	free_linkedList(what_header);
+	free_linkedList(where_header);
+	free_linkedList(who_header);
 
-	head_what = NULL;
-	head_where = NULL;
-	head_who = NULL;
+	what_header = NULL;
+	where_header = NULL;
+	who_header = NULL;
 }
 
 
@@ -199,9 +199,9 @@ void knowledge_reset() {
  *   f - the file
  */
 void knowledge_write(FILE *f) {
-	entRespNode*what = head_what;
-	entRespNode*where = head_where;
-	entRespNode*who = head_who;
+	entRespNode*what = what_header;
+	entRespNode*where = where_header;
+	entRespNode*who = who_header;
 
 	// Save "what" intent's entitiy-responses.
 	fprintf(f, "[what]\n");

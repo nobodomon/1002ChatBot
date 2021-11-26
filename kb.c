@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "chat1002.h"
-extern entRespNode*head_what;
-extern entRespNode*head_where;
-extern entRespNode*head_who;
+extern entRespNode*what_header;
+extern entRespNode*where_header;
+extern entRespNode*who_header;
 
 
 void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset) {
@@ -130,37 +130,37 @@ int kb_update(char* intent, entRespNode* new_node) {
 	}
 	// if the intent is "What"
 	else if (compare_token(intent, "what") == 0) {
-		if (head_what == NULL) {
+		if (what_header == NULL) {
 			// set head to new node if head of linkedlist what is empty
-			head_what = new_node;
+			what_header = new_node;
 		}
 		else {
 			// Append new_node to the linked list.
-			push_linkedList(head_what, new_node);
+			push_linkedList(what_header, new_node);
 		}
 		return KB_OK;
 	}
 	// if the intent is "Where"
 	else if (compare_token(intent, "where") == 0) {
-		if (head_where == NULL) {
+		if (where_header == NULL) {
 			// set head to new node if head of linkedlist where is empty
-			head_where = new_node;
+			where_header = new_node;
 		}
 		else {
 			// Append new_node to the linked list.
-			push_linkedList(head_where, new_node);
+			push_linkedList(where_header, new_node);
 		}
 		return KB_OK;
 	}
 	// if the intent is "Who"
 	else if (compare_token(intent, "who") == 0) {
-		if (head_who == NULL) {
+		if (who_header == NULL) {
 			// set head to new node if head of linkedlist who is empty
-			head_who = new_node;
+			who_header = new_node;
 		}
 		else {
 			// Append new_node to the linked list.
-			push_linkedList(head_who, new_node);
+			push_linkedList(who_header, new_node);
 		}
 		return KB_OK;
 	}

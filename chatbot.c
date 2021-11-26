@@ -46,11 +46,11 @@
 
 #include <time.h>
 #include <stdlib.h>
-#include <time.h>
 
-extern entRespNode* head_what;
-extern entRespNode* head_where;
-extern entRespNode* head_who;
+// Header for 'what','where' and 'who' entity linked list
+extern entRespNode* what_header;
+extern entRespNode* where_header;
+extern entRespNode* who_header;
 
 
 /*
@@ -131,7 +131,7 @@ int chatbot_main(int inc, char* inv[], char* response, int n) {
  */
 int chatbot_is_exit(const char* intent) {
 
-	return compare_token(intent, "exit") == 0 || compare_token(intent, "quit") == 0;
+	return compare_token(intent, "exit") == 0 || compare_token(intent, "quit") == 0 || compare_token(intent, "bye") == 0 || compare_token(intent, "goodbye") == 0;
 
 }
 
@@ -194,20 +194,72 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	char file_path[MAX_INPUT];
 
 	// Get the file path from the user input.
-	if (compare_token(inv[1], "from") == 0) {
-		// LOAD[0] from[1] /file.txt[2]
-		strncpy(file_path, inv[2], strlen(inv[2]));
-		file_path[strlen(inv[2])] = 0;
+	if (inv[1] == NULL) {
+		// If the load statement has 1 word. If file not stated, prompt user for filename.
+
+		// LOAD[0]
+		char tempFilePath[MAX_INPUT] = "";
+		printf("%s: What file would you like to load?\n", chatbot_botname());
+		printf("%s:", chatbot_username());
+		fgets(tempFilePath, MAX_INPUT, stdin);
+		tempFilePath[strlen(tempFilePath) - 1] = '\0';
+
+		strncpy(file_path, tempFilePath, strlen(tempFilePath));
+		file_path[strlen(tempFilePath)] = 0;
 	}
-	else if (compare_token(inv[1], "the") == 0 && compare_token(inv[2], "file") == 0) {
-		// LOAD[0] the[1] file[2] /file.txt[3]
-		strncpy(file_path, inv[3], strlen(inv[3]));
-		file_path[strlen(inv[3])] = 0;
+	else if (inv[2] == NULL) {
+		// If the load statement has 2 words. If file not stated, prompt user for filename.
+
+		if (compare_token(inv[1], "from") == 0) {
+			//LOAD[0] from[1]
+
+			char tempFilePath[MAX_INPUT] = "";
+			printf("%s: What file would you like to load?\n", chatbot_botname());
+			printf("%s:", chatbot_username());
+			fgets(tempFilePath, MAX_INPUT, stdin);
+			tempFilePath[strlen(tempFilePath) - 1] = '\0';
+
+			strncpy(file_path, tempFilePath, strlen(tempFilePath));
+			file_path[strlen(tempFilePath)] = 0;
+		}
+		else if (compare_token(inv[0], "load") == 0 && inv[1] != NULL) {
+			// LOAD[0] /file.txt[1]
+
+			strncpy(file_path, inv[1], strlen(inv[1]));
+			file_path[strlen(inv[1])] = 0;
+		}
 	}
-	else {
-		// LOAD[0] /file.txt[1]
-		strncpy(file_path, inv[1], strlen(inv[1]));
-		file_path[strlen(inv[1])] = 0;
+	else if (inv[3] == NULL) {
+		// If the load statement has 3 words. If file not stated, prompt user for filename.
+
+		if (compare_token(inv[1], "the") == 0 && compare_token(inv[2], "file") == 0) {
+			// LOAD[0] the[1] file[2]
+
+			char tempFilePath[MAX_INPUT] = "";
+			printf("%s: What file would you like to load?\n", chatbot_botname());
+			printf("%s:", chatbot_username());
+			fgets(tempFilePath, MAX_INPUT, stdin);
+			tempFilePath[strlen(tempFilePath) - 1] = '\0';
+
+			strncpy(file_path, tempFilePath, strlen(tempFilePath));
+			file_path[strlen(tempFilePath)] = 0;
+		}
+		else if (compare_token(inv[0], "load") == 0 && compare_token(inv[1], "from") == 0) {
+			// LOAD[0] from[1] /file.txt[2]
+
+			strncpy(file_path, inv[2], strlen(inv[2]));
+			file_path[strlen(inv[2])] = 0;
+		}
+	}
+	else if (inv[4] == NULL) {
+		// If the load statement has 4 words.
+
+		if (compare_token(inv[1], "the") == 0 && compare_token(inv[2], "file") == 0) {
+			// LOAD[0] the[1] file[2] /file.txt[3]
+
+			strncpy(file_path, inv[3], strlen(inv[3]));
+			file_path[strlen(inv[3])] = 0;
+		}
 	}
 
 	// Open the file indicated by user in read mode.
@@ -221,7 +273,7 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	}
 	else {
 		// Print if file does not exist or cannot be found.
-		snprintf(response, n, "Unfortunately, I cannot read the file '[%s]'.", file_path);
+		snprintf(response, n, "Unfortunately, I cannot read the file.");
 	}
 
 	return 0;

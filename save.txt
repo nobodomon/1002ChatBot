@@ -1,6 +1,7 @@
 [what]
-sit=my school
+sit=my house
 
 [where]
+sit=done
 
 [who]
