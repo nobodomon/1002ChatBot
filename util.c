@@ -180,6 +180,6 @@ int knowledge_update(char* intent, entRespNode* new_node) {
 	}
 	else
 	{
-		return KB_INVALID; // 'what', 'where', or 'who'
+		return KB_INVALID; // not 'what', 'where', or 'who'
 	}
 }
