@@ -41,6 +41,8 @@ typedef struct node {
 	struct node* next; // Pointer to the next node in the linked list.
 } entRespNode;
 
+typedef entRespNode* node_ptr;
+
 /* functions defined in main.c */
 int compare_token(const char* token1, const char* token2);
 void prompt_user(char* buf, int n, const char* format, ...);
@@ -71,17 +73,17 @@ void knowledge_write(FILE* f);
 
 /* Functions defined in kb.c */
 void strcat_array_of_strings(char* dest, char* src[], size_t src_size, size_t n, int offset);
-entRespNode* create_node(const char* entity, const char* response);
-void push_linkedList(entRespNode* head, entRespNode* node);
-void free_linkedList(entRespNode* node);
-int knowledge_update(char* intent, entRespNode* new_node);
+node_ptr create_node(const char* entity, const char* response);
+void push_linkedList(node_ptr head, node_ptr node);
+void free_linkedList(node_ptr node);
+int knowledge_update(char* intent, node_ptr new_node);
 
 /*
 	Linked lists.
 	Use "extern" to mark external variable.
 */
-entRespNode* what_header;
-entRespNode* where_header;
-entRespNode* who_header;
+node_ptr what_header;
+node_ptr where_header;
+node_ptr who_header;
 
 #endif
