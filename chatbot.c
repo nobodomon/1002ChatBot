@@ -40,14 +40,9 @@
  * returned by these functions at the start of each line.
  */
 
-#include <stdio.h>
-#include <string.h>
 #include "chat1002.h"
 
-#include <time.h>
-#include <stdlib.h>
-
-// Header for 'what','where' and 'who' entity linked list
+ // Header for 'what','where' and 'who' entity linked list
 extern entRespNode* what_header;
 extern entRespNode* where_header;
 extern entRespNode* who_header;
@@ -96,7 +91,7 @@ int chatbot_main(int inc, char* inv[], char* response, int n) {
 	}
 
 	char intent[MAX_INPUT] = { 0 };
-	safe_strcat(intent, inv, inc, MAX_INPUT - 1, 0);
+	strcat_array_of_strings(intent, inv, inc, MAX_INPUT - 1, 0);
 
 	/* look for an intent and invoke the corresponding do_* function */
 	if (chatbot_is_exit(inv[0]))
@@ -131,8 +126,18 @@ int chatbot_main(int inc, char* inv[], char* response, int n) {
  */
 int chatbot_is_exit(const char* intent) {
 
-	return compare_token(intent, "exit") == 0 || compare_token(intent, "quit") == 0 || compare_token(intent, "bye") == 0 || compare_token(intent, "goodbye") == 0;
+	const char* exitConditions[] = { "exit", "quit", "bye", "goodbye" };
+	int size = sizeof(exitConditions) / sizeof(exitConditions[0]);
 
+	for (int i = 0; i < size; i++)
+	{
+		if (compare_token(intent, exitConditions[i]) == 0)
+		{
+			return 1;
+		}
+	}
+
+	return 0;
 }
 
 
@@ -325,13 +330,18 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
  */
 int chatbot_is_question(const char* intent) {
 
-	if (compare_token(intent, "what") == 0 || compare_token(intent, "where") == 0 || compare_token(intent, "who") == 0) {
-		return 1;
-	}
-	else {
-		return 0;
+	const char* questions[] = { "what", "what", "who" };
+	int size = sizeof(questions) / sizeof(questions[0]);
+
+	for (int i = 0; i < size; i++)
+	{
+		if (compare_token(intent, questions[i]) == 0)
+		{
+			return 1;
+		}
 	}
 
+	return 0;
 }
 
 
@@ -366,14 +376,15 @@ int chatbot_do_question(int inc, char* inv[], char* response, int n) {
 		offset = 2;
 	}
 
-	safe_strcat(ent, inv, inc, (MAX_ENTITY - 1), offset);
+	strcat_array_of_strings(ent, inv, inc, (MAX_ENTITY - 1), offset);
 
 	if (knowledge_get(inv[0], ent, response, n) == KB_NOTFOUND) {
 		inv[0][0] = toupper(inv[0][0]);
-		safe_strcat(unknown, inv, inc, (MAX_RESPONSE - 1), 0);
+		strcat_array_of_strings(unknown, inv, inc, (MAX_RESPONSE - 1), 0);
 		strncat(unknown, "?", strlen("?") + 1);
 
 		prompt_user(reply, MAX_RESPONSE, "%s", unknown);
+
 		knowledge_put(inv[0], ent, reply);
 		snprintf(response, n, "Thank you for teaching me!");
 	}
@@ -500,7 +511,7 @@ int chatbot_do_save(int inc, char* inv[], char* response, int n) {
 		printf("%s: The file '[%s]' already exists. Do you want to overwrite the existing file?\n", chatbot_botname(), file_path);
 		printf("%s:", chatbot_username());
 		fgets(check, MAX_INPUT, stdin);
-		check[strlen(check)-1] = '\0';
+		check[strlen(check) - 1] = '\0';
 
 		if (compare_token(check, "overwrite") == 0 || compare_token(check, "yes") == 0) {
 			// Open the file in write mode and saves file.
@@ -545,9 +556,11 @@ int chatbot_do_save(int inc, char* inv[], char* response, int n) {
  */
 int chatbot_is_smalltalk(const char* intent) {
 
-	const char* smalltalk[] = { "hi", "hello", "hey", "how are you", "how's everything", "how's it going", "are you human", "are you a robot", "what is your name", "who are you" , "tell me something" , "1","2","3", "time","what is the current time" , "what is the date today",};
+	const char* smalltalk[] = { "hi", "hello", "hey", "how are you", "how's everything", "how's it going", "are you human", "are you a robot", "what is your name", "who are you" , "tell me something" , "1","2","3", "time","what is the current time" , "what is the date today", };
 
-	for (int i = 0; i < 17; i++)
+	int size = sizeof(smalltalk) / sizeof(smalltalk[0]);
+
+	for (int i = 0; i < size; i++)
 	{
 		if (compare_token(intent, smalltalk[i]) == 0)
 		{
@@ -573,7 +586,7 @@ int chatbot_is_smalltalk(const char* intent) {
 int chatbot_do_smalltalk(int inc, char* inv[], char* response, int n) {
 
 	char intent[MAX_INPUT] = { 0 };
-	safe_strcat(intent, inv, inc, MAX_INPUT - 1, 0);
+	strcat_array_of_strings(intent, inv, inc, MAX_INPUT - 1, 0);
 
 	const char* random_hi[] = { "Hi!", "Hello!", "Hello there!", "Hey hey~", "What's Up!!" };
 	const char* random_can[] = { "What do you think?", "Maybe I could!", "Well, it's either a yes or a no." };
@@ -612,9 +625,9 @@ int chatbot_do_smalltalk(int inc, char* inv[], char* response, int n) {
 	}
 	else if (compare_token("how are you", intent) == 0 || compare_token("how\'s everything?", intent) == 0 || compare_token("how\'s it going?", intent) == 0)
 	{
-		snprintf(response, n, "%s\n%s: %s",random_how_response,chatbot_botname(), random_how_question);
+		snprintf(response, n, "%s\n%s: %s", random_how_response, chatbot_botname(), random_how_question);
 	}
-	else if (compare_token("are you human", intent) == 0 || compare_token("are you a robot?", intent) == 0)
+	else if (compare_token("are you human", intent) == 0 || compare_token("are you a robot", intent) == 0)
 	{
 		snprintf(response, n, "I am a robot. Are you a robot?");
 	}
@@ -629,7 +642,8 @@ int chatbot_do_smalltalk(int inc, char* inv[], char* response, int n) {
 	else if (compare_token("1", intent) == 0) {
 
 		snprintf(response, n, "%s", random_joke);
-	}else if(compare_token("2", intent) == 0) {
+	}
+	else if (compare_token("2", intent) == 0) {
 
 		snprintf(response, n, "%s", random_fun_fact);
 	}
@@ -659,7 +673,7 @@ int chatbot_do_smalltalk(int inc, char* inv[], char* response, int n) {
 		else {
 			strcpy(ampm, "AM");
 		}
-		snprintf(response, n, "It is %d %s %d, %02d:%02d:%02d %s", timeinfo->tm_mday, months[timeinfo->tm_mon -1], timeinfo->tm_year + 1900, twelvehrformat, timeinfo->tm_min, timeinfo->tm_sec, ampm);
+		snprintf(response, n, "It is %d %s %d, %02d:%02d:%02d %s", timeinfo->tm_mday, months[timeinfo->tm_mon - 1], timeinfo->tm_year + 1900, twelvehrformat, timeinfo->tm_min, timeinfo->tm_sec, ampm);
 	}
 	else {
 		return 0;

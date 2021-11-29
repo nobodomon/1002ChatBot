@@ -6,25 +6,20 @@
  * You should not need to modify this file. You may invoke its functions if you like, however.
  */
 
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "chat1002.h"
 
-/* word delimiters */
-const char *delimiters = " ?\t\n";
+ /* word delimiters */
+const char* delimiters = " ?\t\n";
 
 
 /*
  * Main loop.
  */
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 
 	char input[MAX_INPUT];      /* buffer for holding the user input */
 	int inc;                    /* the number of words in the user input */
-	char *inv[MAX_INPUT];       /* pointers to the beginning of each word of input */
+	char* inv[MAX_INPUT];       /* pointers to the beginning of each word of input */
 	char output[MAX_RESPONSE];  /* the chatbot's output */
 	int len;                    /* length of a word */
 	int done = 0;               /* set to 1 to end the main loop */
@@ -99,7 +94,7 @@ int main(int argc, char *argv[]) {
  * Returns:
  *   as strcmp()
  */
-int compare_token(const char *token1, const char *token2) {
+int compare_token(const char* token1, const char* token2) {
 
 	int i = 0;
 	while (token1[i] != '\0' && token2[i] != '\0') {
@@ -129,7 +124,7 @@ int compare_token(const char *token1, const char *token2) {
  *   format - format string, as printf
  *   ...    - as printf
  */
-void prompt_user(char *buf, int n, const char *format, ...) {
+void prompt_user(char* buf, int n, const char* format, ...) {
 
 	/* print the prompt */
 	va_list args;
@@ -142,16 +137,17 @@ void prompt_user(char *buf, int n, const char *format, ...) {
 
 	/* get the response from the user */
 	fgets(buf, n, stdin);
-	char *nl = strchr(buf, '\n');
-	if (nl != NULL){
+	char* nl = strchr(buf, '\n');
+	if (nl != NULL) {
 		*nl = '\0';
-	}else {
+	}
+	else {
 		// Clears the excess characters if it exceeds buffer size.
 		int c;
 		do {
 			c = getchar();
 		} while ((c = getchar()) != '\n' && c != EOF);
-	
-	/* End of modification. */
+
+		/* End of modification. */
 	}
 }

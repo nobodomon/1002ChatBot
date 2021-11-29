@@ -1,10 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "chat1002.h"
-extern entRespNode*what_header;
-extern entRespNode*where_header;
-extern entRespNode*who_header;
+extern entRespNode* what_header;
+extern entRespNode* where_header;
+extern entRespNode* who_header;
 
 
 entRespNode* create_node(const char* entity, const char* response) {
@@ -22,7 +19,7 @@ entRespNode* create_node(const char* entity, const char* response) {
 	entRespNode* node = malloc(sizeof(entRespNode));
 
 	if (node == NULL) {
-		printf("!! Memory allocation failure.\n");
+		printf("malloc() failed for entRespNode* node = malloc(sizeof(entRespNode)), node == NULL\n");
 		return NULL;
 	}
 
@@ -34,7 +31,7 @@ entRespNode* create_node(const char* entity, const char* response) {
 }
 
 
-void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset) {
+void strcat_array_of_strings(char* dest, char* src[], size_t src_size, size_t n, int offset) {
 	/*
 		This function safely concatenates an array of strings to make it does not overrun the given memory space.
 
@@ -48,11 +45,13 @@ void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset)
 	size_t len_check, remainder, last;
 
 	for (int i = offset; i < src_size; i++) {
-		if (i != (src_size - 1)) {
+		// Loop through src[offset+i]
+		if (i == (src_size - 1)) {
+			len_check = strlen(dest) + strlen(src[i]);
+		}
+		else {
 			// Account for additional space.
 			len_check = strlen(dest) + strlen(src[i]) + 1;
-		} else {
-			len_check = strlen(dest) + strlen(src[i]);
 		}
 
 		if (len_check < n) {
@@ -61,9 +60,10 @@ void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset)
 
 			if (i != (src_size - 1)) {
 				// Add a space between words.
-				strcat(dest," ");
+				strncat(dest, " ", strlen(" "));
 			}
-		} else {
+		}
+		else {
 			// Not enough space to store the current string.
 			remainder = n - strlen(dest);
 
@@ -75,29 +75,31 @@ void safe_strcat(char *dest, char *src[], size_t src_size, size_t n, int offset)
 		}
 	}
 
-	// In case string isn't null terminated.
-	last = strlen(dest);
-	dest[last] = '\0';
+	// Add null terminator to string, for safety.
+	dest[strlen(dest)] = 0;
 }
 
 
-void push_linkedList(entRespNode*head, entRespNode*node) {
+void push_linkedList(entRespNode* head, entRespNode* node) {
 	/*
 		This function adds a new node to a linked list.
 
 		Arguments:
 			head 		[entRespNode *]:	The head of the linked list
 			node 		[entRespNode *]:	The node to add into the linked list.
-			currNode 	[entRespNode *]:	Temp node that points to existing nodes in the linked list.
-	*/
-	entRespNode*currNode = head;
 
-	do{
+		Variables:
+		currNode 	[entRespNode *]:	Temp node that points to existing nodes in the linked list.
+	*/
+	entRespNode* currNode = head;
+
+	do {
 		if (compare_token(currNode->entity, node->entity) == 0) {
 			// Entity already exist. Node not added to the linked list.
 			snprintf(currNode->response, MAX_RESPONSE, "%s", node->response);
 			break;
-		} else if (currNode->next == NULL) {
+		}
+		else if (currNode->next == NULL) {
 			// End of linked list. Add the new node to the linked list.
 			currNode->next = node;
 			break;
@@ -108,7 +110,7 @@ void push_linkedList(entRespNode*head, entRespNode*node) {
 }
 
 
-void free_linkedList(entRespNode*node) {
+void free_linkedList(entRespNode* node) {
 	/*
 		This function free up all nodes in a linked list.
 
@@ -116,12 +118,14 @@ void free_linkedList(entRespNode*node) {
 			node 		[node_t *]:			The head node of the linked list.
 			currNode 	[entRespNode *]:	Temp node that points to existing nodes in the linked list.
 	*/
-	entRespNode*current;
 
-	while (node != NULL) {
-		current = node;
-		node = node->next;
-		free(current);
+	entRespNode* temp = node;
+	entRespNode* next = NULL;
+	while (temp != NULL)
+	{
+		next = temp->next;
+		free(temp);
+		temp = next;
 	}
 }
 
@@ -135,7 +139,7 @@ int knowledge_update(char* intent, entRespNode* new_node) {
 	*/
 
 	if (new_node == NULL) {
-		//memory allocation for new node failed
+		// memory allocation for new node failed
 		return KB_NOMEM;
 	}
 	// If the intent is "What"
@@ -173,5 +177,9 @@ int knowledge_update(char* intent, entRespNode* new_node) {
 			push_linkedList(who_header, new_node);
 		}
 		return KB_OK;
+	}
+	else
+	{
+		return KB_INVALID; // 'what', 'where', or 'who'
 	}
 }
