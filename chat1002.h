@@ -72,6 +72,7 @@ int knowledge_read(FILE* f);
 void knowledge_write(FILE* f);
 
 /* Functions defined in kb.c */
+int detectIntent(const char* intent, int braces);
 void strcat_array_of_strings(char* dest, char* src[], size_t src_size, size_t n, int offset);
 node_ptr create_node(const char* entity, const char* response);
 void push_linkedList(node_ptr head, node_ptr node);

@@ -18,6 +18,10 @@ extern entRespNode* what_header;
 extern entRespNode* where_header;
 extern entRespNode* who_header;
 
+
+
+
+
 /*
  * Get the response to a question.
  *
@@ -32,37 +36,35 @@ extern entRespNode* who_header;
  *   KB_NOTFOUND, if no response could be found
  *   KB_INVALID, if 'intent' is not a recognised question word
  */
+
 int knowledge_get(const char* intent, const char* entity, char* response, int n) {
 
-	entRespNode* search;
+	entRespNode* intentHeader;
 	int result = KB_NOTFOUND;
 
-	if (compare_token(intent, "what") == 0) {
-		// Intent is what.
-		search = what_header;
-	}
-	else if (compare_token(intent, "where") == 0) {
-		// Intent is where.
-		search = where_header;
-	}
-	else if (compare_token(intent, "who") == 0) {
-		// Intent is who.
-		search = who_header;
-	}
-	else {
-		// Invalid intent.
+	switch (detectIntent(intent,0)) {
+	case 1:
+		intentHeader = what_header;
+		break;
+	case 2:
+		intentHeader = where_header;
+		break;
+	case 3:
+		intentHeader = who_header;
+		break;
+	default:
 		return KB_INVALID;
 	}
 
-	while (search != NULL) {
-		if (compare_token(entity, search->entity) == 0) {
+	while (intentHeader != NULL) {
+		if (compare_token(entity, intentHeader->entity) == 0) {
 			// Found response in knowledge base.
-			snprintf(response, n, "%s", search->response);
+			memccpy(response, intentHeader->response, strlen(intentHeader->response), n);
 			result = KB_OK;
 			break;
 		}
-		search = search->next;
-	}
+		intentHeader = intentHeader->next;
+	};
 
 	return result;
 
@@ -152,21 +154,19 @@ int knowledge_read(FILE* f) {
 
 			if (strchr(line, '[') != NULL && strchr(line, ']') != NULL) {
 				// Square brackets found. Check intent.
-				if (compare_token(line, "[what]") == 0) {
-					// Intent: what.
-					f_intent = "what";
-				}
-				else if (compare_token(line, "[where]") == 0) {
-					// Intent: where.
-					f_intent = "where";
-				}
-				else if (compare_token(line, "[who]") == 0) {
-					// Intent: who.
-					f_intent = "who";
-				}
-				else {
-					// Invalid intent.
-					f_intent = NULL;
+				switch (detectIntent(line, 1)) {
+					case 1:
+						f_intent = "what";
+						break;
+					case 2:
+						f_intent = "where";
+						break;
+					case 3:
+						f_intent = "who";
+						break;
+					default:
+						f_intent = NULL;
+						break;
 				}
 			}
 			else if (f_intent != NULL && strchr(line, '=') != NULL) {

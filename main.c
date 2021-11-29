@@ -39,7 +39,24 @@ int main(int argc, char* argv[]) {
 			/* read the line */
 			printf("%s: ", chatbot_username());
 			fgets(input, MAX_INPUT, stdin);
-
+			// Checks if there is newline at the end of input[MAX_INPUT] - maximum number of characters.
+			char* newline = strchr(input, '\n');
+			if (newline != NULL) {
+				//if there is replace with terminating string
+				*newline = '\0';
+				
+			}
+			else {
+				//other wise set newline to 2nd last character of input
+				input[MAX_INPUT - 2] = '\n';
+				int ch;
+				//getchar to clear stdin
+				do {
+					ch = getchar();
+				} while (ch != EOF && ch != '\n');
+				clearerr(stdin);
+			}
+			
 			/* split it into words */
 			inc = 0;
 			inv[inc] = strtok(input, delimiters);
@@ -121,8 +138,20 @@ void prompt_user(char* buf, int n, const char* format, ...) {
 
 	/* get the response from the user */
 	fgets(buf, n, stdin);
+	// Checks if there is newline at the end of input[MAX_INPUT] - maximum number of characters.
 	char* nl = strchr(buf, '\n');
 	if (nl != NULL) {
+		//if there is replace with terminating string
 		*nl = '\0';
+	}
+	else {
+		//other wise set newline to 2nd last character of input
+		buf[MAX_RESPONSE - 2] = '\n';
+		int ch;
+		//getchar to clear stdin
+		do {
+			ch = getchar();
+		} while (ch != EOF && ch != '\n');
+		clearerr(stdin);
 	}
 }

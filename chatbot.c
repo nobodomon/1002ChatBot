@@ -330,7 +330,7 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
  */
 int chatbot_is_question(const char* intent) {
 
-	const char* questions[] = { "what", "what", "who" };
+	const char* questions[] = { "what", "where", "who" };
 	int size = sizeof(questions) / sizeof(questions[0]);
 
 	for (int i = 0; i < size; i++)
@@ -372,7 +372,7 @@ int chatbot_do_question(int inc, char* inv[], char* response, int n) {
 	size_t offset = 1;
 
 	// Check where does the question start.
-	if (compare_token(inv[1], "is") == 0 || compare_token(inv[1], "are") == 0) {
+	if (compare_token(inv[offset], "is") == 0 || compare_token(inv[offset], "are") == 0) {
 		offset = 2;
 	}
 
@@ -386,7 +386,8 @@ int chatbot_do_question(int inc, char* inv[], char* response, int n) {
 		prompt_user(reply, MAX_RESPONSE, "%s", unknown);
 
 		knowledge_put(inv[0], ent, reply);
-		snprintf(response, n, "Thank you for teaching me!");
+		//snprintf(response, n, "Thank you for teaching me!");
+		memccpy(response, "Thank you for teaching me!", strlen("Thank you for teaching me!"), n);
 	}
 
 	return 0;
@@ -428,7 +429,7 @@ int chatbot_do_reset(int inc, char* inv[], char* response, int n) {
 
 	// Reset the chatbot's knowledge.
 	knowledge_reset();
-	snprintf(response, n, "Beep Boop. I have been resetted.");
+	memccpy(response, "Beep Boop. I have been resetted.", strlen("Beep Boop. I have been resetted."), n);
 	return 0;
 }
 
