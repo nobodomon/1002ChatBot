@@ -40,22 +40,6 @@ int main(int argc, char* argv[]) {
 			printf("%s: ", chatbot_username());
 			fgets(input, MAX_INPUT, stdin);
 
-			/*
-			* If no newline or user input is larger than the buffer size.
-			*/
-			char* nl = strchr(input, '\n');
-			if (nl != NULL) {
-				// newline found, replace it with null terminator.
-				*nl = '\0';
-			}
-			else {
-				// Clears the excess characters if it exceeds buffer size.
-				int c;
-				do {
-					c = getchar();
-				} while ((c = getchar()) != '\n' && c != EOF);
-			}
-
 			/* split it into words */
 			inc = 0;
 			inv[inc] = strtok(input, delimiters);
@@ -140,14 +124,5 @@ void prompt_user(char* buf, int n, const char* format, ...) {
 	char* nl = strchr(buf, '\n');
 	if (nl != NULL) {
 		*nl = '\0';
-	}
-	else {
-		// Clears the excess characters if it exceeds buffer size.
-		int c;
-		do {
-			c = getchar();
-		} while ((c = getchar()) != '\n' && c != EOF);
-
-		/* End of modification. */
 	}
 }
