@@ -61,6 +61,19 @@ int detectIntent(const char* intent, int braces) {
 
 
 
+/*
+* Creates a node for the linked list.
+*
+* Inputs:
+*	entity			-	The question
+*	response		-	The response to the question
+*
+* Returns:
+*	node [node_ptr]	-	The newly created node
+*	NULL [NULL]		-	If memory allocation fails returns NULL
+*
+*/
+
 node_ptr create_node(const char* entity, const char* response) {
 	node_ptr node = malloc(sizeof(entRespNode));
 
@@ -120,34 +133,6 @@ void strcat_array_of_strings(char* dest, char* src[], size_t src_size, size_t n,
 
 	// Add null terminator to string, for safety.
 	dest[strlen(dest)] = '\0';
-}
-
-/*
-* Creates a node for the linked list.
-* 
-* Inputs:
-*	entity			-	The question
-*	response		-	The response to the question
-* 
-* Returns:
-*	node [node_ptr]	-	The newly created node	
-*	NULL [NULL]		-	If memory allocation fails returns NULL
-* 
-*/
-
-node_ptr create_node(const char* entity, const char* response) {
-	node_ptr node = malloc(sizeof(entRespNode));
-
-	if (node == NULL) {
-		printf("/!\\ - malloc() failed for entRespNode* node = malloc(sizeof(entRespNode)), node == NULL\n");
-		return NULL;
-	}
-
-	memccpy(node->entity, entity, strlen(entity), MAX_ENTITY);
-	memccpy(node->response, response, strlen(response), MAX_RESPONSE);
-	node->next = NULL;
-
-	return node;
 }
 
 

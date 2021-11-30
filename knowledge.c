@@ -102,52 +102,53 @@ int knowledge_put(const char* intent, const char* entity, const char* response) 
  * Input:
  *   f - the file
  *
- * Returns: the number of entity/response pairs successful read from the file
+ * Returns: the number of entity/response pairs successful read from the file and sets knowledge headers based on information read from file.
  */
 int knowledge_read(FILE* f) {
 
-	/*
-		ctr:	The number of successful results retrieved from the file.
-		result:	The result of inserting the entity-response into the knowledge base.
-		line:	The buffer to store content of the file.
-	*/
-	int ctr = 0, result;
+	//	int linesRead			= a counter for number of lines read
+	//	char line[MAX_INPUT]	= the line that will be read from file
+	//	char* f_intent			= which header to be set.
+	//	int result				= the results from knowledge_update()
+	int linesRead = 0, result;
 	char line[MAX_INPUT];
 	char* f_intent = NULL;
 
-	//const size_t MAX_READLEN = (size_t)(MAX_ENTITY + MAX_RESPONSE);
 
 	while (fgets(line, MAX_RESPONSE, (FILE*)f)) {
 		char* f_entity, * f_response;
-		char* cr, * nl;
+		char* carriageReturn, * newLine;
 
-		// Read line by line.
+		//Check if the line is empty
 		if (strcmp(line, "\n") == 0 || strcmp(line, "\r\n") == 0) {
-			// Empty line.
+			//skip to next line
 			continue;
 		}
 		else {
-			cr = strchr(line, '\r');
-			nl = strchr(line, '\n');
+			//Check if carriage return is in line.
+			carriageReturn = strchr(line, '\r');
+			//Check if newline character is in line.
+			newLine = strchr(line, '\n');
 
-			if (cr != NULL) {
-				// Carriage return found, replace it with null terminator.
-				*cr = '\0';
+			if (carriageReturn != NULL) {
+				// Replace carriage return character with null terminator.
+				*carriageReturn = '\0';
 			}
-			else if (nl != NULL) {
-				// newline found, replace it with null terminator.
-				*nl = '\0';
+			else if (newLine != NULL) {
+				// Replace new line character with null terminator.
+				*newLine = '\0';
 			}
 			else {
-				// Clear any remaining input to prevent overflow.
+				//getchar to clear stdin if line exceeds MAX_RESPONSE
 				int c;
-				while ((c = getchar()) != '\n' && c != EOF) {
+				do {
+					c = getchar();
 					continue;
-				}
+				} while (c != '\n' && c != EOF);
 			}
-
+			//If square brackets are found, intent is found.
 			if (strchr(line, '[') != NULL && strchr(line, ']') != NULL) {
-				// Square brackets found. Check intent.
+				// Check the intent of the line with braces.
 				switch (detectIntent(line, 1)) {
 					case 1:
 						f_intent = "what";
@@ -163,21 +164,23 @@ int knowledge_read(FILE* f) {
 						break;
 				}
 			}
-			else if (f_intent != NULL && strchr(line, '=') != NULL) {
+			//after square brackets line, knowledge will be in next line.
+			else if ((f_intent != NULL) && (strchr(line, '=') != NULL)) {
 				// Entity-Response pair line.
 				f_entity = strtok(line, "=");
 				f_response = strtok(NULL, "=");
+				//put the knowledge from file into lined list.
 				result = knowledge_put(f_intent, f_entity, f_response);
 
 				if (result == KB_OK) {
 					// Increment the successful counter.
-					ctr++;
+					linesRead++;
 				}
 			}
 		}
 	}
 
-	return ctr;
+	return linesRead;
 }
 
 
