@@ -14,13 +14,9 @@
 
 #include "chat1002.h"
 
-extern entRespNode* what_header;
-extern entRespNode* where_header;
-extern entRespNode* who_header;
-
-
-
-
+node_ptr what_header;
+node_ptr where_header;
+node_ptr who_header;
 
 /*
  * Get the response to a question.
@@ -39,7 +35,7 @@ extern entRespNode* who_header;
 
 int knowledge_get(const char* intent, const char* entity, char* response, int n) {
 
-	entRespNode* intentHeader;
+	node_ptr intentHeader;
 	int result = KB_NOTFOUND;
 
 	switch (detectIntent(intent,0)) {
@@ -208,9 +204,9 @@ void knowledge_reset() {
  *   f - the file
  */
 void knowledge_write(FILE* f) {
-	entRespNode* what = what_header;
-	entRespNode* where = where_header;
-	entRespNode* who = who_header;
+	node_ptr what = what_header;
+	node_ptr where = where_header;
+	node_ptr who = who_header;
 
 	// Save "what" intent's entitiy-responses.
 	fprintf(f, "[what]\n");

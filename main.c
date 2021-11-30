@@ -11,7 +11,6 @@
  /* word delimiters */
 const char* delimiters = " ?\t\n";
 
-
 /*
  * Main loop.
  */

@@ -77,7 +77,7 @@ node_ptr create_node(const char* entity, const char* response) {
 	node_ptr node = malloc(sizeof(entRespNode));
 
 	if (node == NULL) {
-		printf("/!\\ - malloc() failed for entRespNode* node = malloc(sizeof(entRespNode)), node == NULL\n");
+		printf("/!\\ - malloc() failed for node_ptr node = malloc(sizeof(entRespNode)), node == NULL\n");
 		return NULL;
 	}
 
