@@ -9,6 +9,7 @@
 #define _CHAT1002_H
 #define _CRT_SECURE_NO_WARNINGS // msvc workaround for calling unsafe functions, without breaking code portability
 
+// simplify includes by having all in 1 header file
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -71,7 +72,7 @@ void knowledge_reset();
 int knowledge_read(FILE* f);
 void knowledge_write(FILE* f);
 
-/* Functions defined in kb.c */
+/* Functions defined in util.c */
 int detectIntent(const char* intent, int braces);
 void strcat_array_of_strings(char* dest, char* src[], size_t src_size, size_t n, int offset);
 node_ptr create_node(const char* entity, const char* response);
