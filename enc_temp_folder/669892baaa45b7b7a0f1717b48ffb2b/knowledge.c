@@ -14,9 +14,15 @@
 
 #include "chat1002.h"
 
+<<<<<<< Updated upstream
 node_ptr what_header;
 node_ptr where_header;
 node_ptr who_header;
+=======
+extern entRespNode* what_header;
+extern entRespNode* where_header;
+extern entRespNode* who_header;
+>>>>>>> Stashed changes
 
 /*
  * Get the response to a question.

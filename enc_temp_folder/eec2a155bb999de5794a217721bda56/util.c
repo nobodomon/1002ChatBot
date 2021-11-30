@@ -61,25 +61,9 @@ int detectIntent(const char* intent, int braces) {
 
 
 
-node_ptr create_node(const char* entity, const char* response) {
-	node_ptr node = malloc(sizeof(entRespNode));
-
-	if (node == NULL) {
-		printf("/!\\ - malloc() failed for entRespNode* node = malloc(sizeof(entRespNode)), node == NULL\n");
-		return NULL;
-	}
-
-	memccpy(node->entity, entity, strlen(entity), MAX_ENTITY);
-	memccpy(node->response, response, strlen(response), MAX_RESPONSE);
-	node->next = NULL;
-
-	return node;
-}
-
-
 void strcat_array_of_strings(char* dest, char* src[], size_t src_size, size_t n, int offset) {
 	/*
-		This concatenates an array of strings to dest, given the src array and src size.
+		This function safely concatenates an array of strings to make it does not overrun the given memory space.
 
 		Arguments:
 			dest 		[char *]:	The pointer to the destination.
@@ -88,7 +72,7 @@ void strcat_array_of_strings(char* dest, char* src[], size_t src_size, size_t n,
 			n			[size_t]:	The maximum size of the destination.
 			offset		[int]:		The position of src to start from.
 	*/
-	size_t len_check, remainder;
+	size_t len_check, remainder, last;
 
 	for (int i = offset; i < src_size; i++) {
 		// Loop through src[offset+i]
@@ -112,7 +96,12 @@ void strcat_array_of_strings(char* dest, char* src[], size_t src_size, size_t n,
 		else {
 			/*
 			// Not enough space to store the current string.
-			// ignores the rest of the strings and exit loop
+			remainder = n - strlen(dest);
+
+			if (remainder > 0) {
+				strncat(dest, src[i], remainder);
+			}
+			// No more space for more strings, break.
 			*/
 			break;
 		}
