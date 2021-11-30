@@ -91,7 +91,7 @@ node_ptr create_node(const char* entity, const char* response) {
 
 void strcat_array_of_strings(char* dest, char* src[], size_t src_size, size_t n, int offset) {
 	/*
-		This function safely concatenates an array of strings to make it does not overrun the given memory space.
+		This concatenates an array of strings to dest, given the src array and src size.
 
 		Arguments:
 			dest 		[char *]:	The pointer to the destination.
