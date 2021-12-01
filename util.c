@@ -82,8 +82,8 @@ node_ptr create_node(const char* entity, const char* response) {
 		return NULL;
 	}
 
-	memccpy(node->entity, entity, strlen(entity), MAX_ENTITY);
-	memccpy(node->response, response, strlen(response), MAX_RESPONSE);
+	memccpy(node->entity, entity, 0, MAX_ENTITY);
+	memccpy(node->response, response, 0, MAX_RESPONSE);
 	node->next = NULL;
 
 	return node;
@@ -215,7 +215,7 @@ void push_linkedList(node_ptr head, node_ptr node) {
 		if (compare_token(currNode->entity, node->entity) == 0) {
 			// Entity already exist. Node will not added to the linked list.
 			// Copies the memory of input node into temp currNode
-			memccpy(currNode->response, node->response, strlen(node->response), MAX_RESPONSE);
+			memccpy(currNode->response, node->response, 0, MAX_RESPONSE);
 			break;
 		}
 		else if (currNode->next == NULL) {

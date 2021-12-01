@@ -55,7 +55,7 @@ int knowledge_get(const char* intent, const char* entity, char* response, int n)
 	while (intentHeader != NULL) {
 		if (compare_token(entity, intentHeader->entity) == 0) {
 			// Found response in knowledge base.
-			memccpy(response, intentHeader->response, strlen(intentHeader->response), n);
+			memccpy(response, intentHeader->response,0, MAX_RESPONSE);
 			result = KB_OK;
 			break;
 		}
@@ -119,6 +119,7 @@ int knowledge_read(FILE* f) {
 			puts("I/O error when reading");
 		}
 		else if (feof(f)) {
+			break;
 		}
 		while (fgets(line, MAX_RESPONSE, (FILE*)f)) {
 			char* f_entity, * f_response;

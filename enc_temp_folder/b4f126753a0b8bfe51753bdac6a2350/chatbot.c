@@ -303,7 +303,7 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 	file_ptr = fopen(file_path, "r");
 
 	if (file_ptr != NULL) {
-		int linesRead = knowledge_read(file_ptr);
+		knowledge_read(file_ptr);
 		fclose(file_ptr);
 		// Print if file exists.
 		snprintf(response, n, "I have regained my memories by reading the file '[%s]', much thanks!", file_path);
