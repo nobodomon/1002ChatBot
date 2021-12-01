@@ -304,8 +304,8 @@ int chatbot_do_load(int inc, char* inv[], char* response, int n) {
 
 	if (file_ptr != NULL) {
 		knowledge_read(file_ptr);
-		// Print if file exists.
 		fclose(file_ptr);
+		// Print if file exists.
 		snprintf(response, n, "I have regained my memories by reading the file '[%s]', much thanks!", file_path);
 	}
 	else {

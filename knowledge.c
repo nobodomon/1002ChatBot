@@ -114,42 +114,47 @@ int knowledge_read(FILE* f) {
 	char line[MAX_INPUT];
 	char* f_intent = NULL;
 
-
-	while (fgets(line, MAX_RESPONSE, (FILE*)f)) {
-		char* f_entity, * f_response;
-		char* carriageReturn, * newLine;
-
-		//Check if the line is empty
-		if (strcmp(line, "\n") == 0 || strcmp(line, "\r\n") == 0) {
-			//skip to next line
-			continue;
+	while (!feof(f)) {
+		if (ferror(f)) {
+			puts("I/O error when reading");
 		}
-		else {
-			//Check if carriage return is in line.
-			carriageReturn = strchr(line, '\r');
-			//Check if newline character is in line.
-			newLine = strchr(line, '\n');
+		else if (feof(f)) {
+		}
+		while (fgets(line, MAX_RESPONSE, (FILE*)f)) {
+			char* f_entity, * f_response;
+			char* carriageReturn, * newLine;
 
-			if (carriageReturn != NULL) {
-				// Replace carriage return character with null terminator.
-				*carriageReturn = '\0';
-			}
-			else if (newLine != NULL) {
-				// Replace new line character with null terminator.
-				*newLine = '\0';
+			//Check if the line is empty
+			if (strcmp(line, "\r\n") == 0 || strcmp(line, "\n") == 0) {
+				//skip to next line
+				continue;
 			}
 			else {
-				//getchar to clear stdin if line exceeds MAX_RESPONSE
-				int c;
-				do {
-					c = getchar();
-					continue;
-				} while (c != '\n' && c != EOF);
-			}
-			//If square brackets are found, intent is found.
-			if (strchr(line, '[') != NULL && strchr(line, ']') != NULL) {
-				// Check the intent of the line with braces.
-				switch (detectIntent(line, 1)) {
+				//Check if carriage return is in line.
+				carriageReturn = strchr(line, '\r');
+				//Check if newline character is in line.
+				newLine = strchr(line, '\n');
+
+				if (carriageReturn != NULL) {
+					// Replace carriage return character with null terminator.
+					*carriageReturn = '\0';
+				}
+				else if (newLine != NULL) {
+					// Replace new line character with null terminator.
+					*newLine = '\0';
+				}
+				else {
+					//getchar to clear stdin if line exceeds MAX_RESPONSE
+					int c;
+					do {
+						c = getchar();
+						continue;
+					} while (c != '\n' && c != EOF);
+				}
+				//If square brackets are found, intent is found.
+				if (strchr(line, '[') != NULL && strchr(line, ']') != NULL) {
+					// Check the intent of the line with braces.
+					switch (detectIntent(line, 1)) {
 					case 1:
 						f_intent = "what";
 						break;
@@ -162,24 +167,24 @@ int knowledge_read(FILE* f) {
 					default:
 						f_intent = NULL;
 						break;
+					}
 				}
-			}
-			//after square brackets line, knowledge will be in next line.
-			else if ((f_intent != NULL) && (strchr(line, '=') != NULL)) {
-				// Entity-Response pair line.
-				f_entity = strtok(line, "=");
-				f_response = strtok(NULL, "=");
-				//put the knowledge from file into lined list.
-				result = knowledge_put(f_intent, f_entity, f_response);
+				//after square brackets line, knowledge will be in next line.
+				else if ((f_intent != NULL) && (strchr(line, '=') != NULL)) {
+					// Entity-Response pair line.
+					f_entity = strtok(line, "=");
+					f_response = strtok(NULL, "=");
+					//put the knowledge from file into lined list.
+					result = knowledge_put(f_intent, f_entity, f_response);
 
-				if (result == KB_OK) {
-					// Increment the successful counter.
-					linesRead++;
+					if (result == KB_OK) {
+						// Increment the successful counter.
+						linesRead++;
+					}
 				}
 			}
 		}
 	}
-
 	return linesRead;
 }
 
