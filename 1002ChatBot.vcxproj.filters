@@ -18,9 +18,6 @@
     <ClCompile Include="chatbot.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="util.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="knowledge.c">
       <Filter>Source Files</Filter>
     </ClCompile>

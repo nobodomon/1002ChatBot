@@ -35,14 +35,23 @@
 #define KB_INVALID  -2
 #define KB_NOMEM    -3
 
-/* Intent-Entity-Response struct. */
+/* Linked List to store entities and responses for knowledge base */
 typedef struct node {
+	/* Store the entity. 'What', 'Where', or 'Who'. */
 	char entity[MAX_ENTITY];
+
+	/* Store the response. E.g. 'SIT=Singapore Institute of Technology'*/
 	char response[MAX_RESPONSE];
-	struct node* next; // Pointer to the next node in the linked list.
+
+	struct node* next;
 } entRespNode;
 
 typedef entRespNode* node_ptr;
+
+/* Head for the linked lists */
+node_ptr what_header;
+node_ptr where_header;
+node_ptr who_header;
 
 /* functions defined in main.c */
 int compare_token(const char* token1, const char* token2);
@@ -71,21 +80,11 @@ int knowledge_put(const char* intent, const char* entity, const char* response);
 void knowledge_reset();
 int knowledge_read(FILE* f);
 void knowledge_write(FILE* f);
-
-/* Functions defined in util.c */
 int detectIntent(const char* intent, int braces);
-void strcat_array_of_strings(char* dest, char* src[], size_t src_size, size_t n, int offset);
+void strcat_array_of_strings(char* dest, char* src[], int src_size, int n, int offset);
 node_ptr create_node(const char* entity, const char* response);
 void push_linkedList(node_ptr head, node_ptr node);
 void free_linkedList(node_ptr node);
 int knowledge_update(char* intent, node_ptr new_node);
-
-/*
-	Linked lists.
-	Use "extern" to mark external variable.
-*/
-node_ptr what_header;
-node_ptr where_header;
-node_ptr who_header;
 
 #endif

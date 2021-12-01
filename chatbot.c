@@ -42,11 +42,6 @@
 
 #include "chat1002.h"
 
- // Header for 'what','where' and 'who' entity linked list
-node_ptr what_header;
-node_ptr where_header;
-node_ptr who_header;
-
 /*
  * Get the name of the chatbot.
  *
