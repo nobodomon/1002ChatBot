@@ -185,17 +185,17 @@ int knowledge_read(FILE* f) {
 
 
 /*
- * Reset the knowledge base, removing all know entitities from all intents.
+ * Reset the knowledge base, removing all known entities from all intents.
  */
 void knowledge_reset() {
-	//Free each linked list
+	//Free each linked list and set the header to NULL.
 	free_linkedList(what_header);
-	free_linkedList(where_header);
-	free_linkedList(who_header);
-
-	//Sets the linkedlist to null.
 	what_header = NULL;
+
+	free_linkedList(where_header);
 	where_header = NULL;
+
+	free_linkedList(who_header);
 	who_header = NULL;
 }
 
@@ -207,28 +207,28 @@ void knowledge_reset() {
  *   f - the file
  */
 void knowledge_write(FILE* f) {
-	node_ptr what = what_header;
-	node_ptr where = where_header;
-	node_ptr who = who_header;
+	node_ptr what_ptr = what_header;
+	node_ptr where_ptr = where_header;
+	node_ptr who_ptr = who_header;
 
-	// Save "what" intent's entitiy-responses.
+	// Save the entity and responses for 'what' intent.
 	fprintf(f, "[what]\n");
-	while (what != NULL) {
-		fprintf(f, "%s=%s\n", what->entity, what->response);
-		what = what->next;
+	while (what_ptr != NULL) {
+		fprintf(f, "%s=%s\n", what_ptr->entity, what_ptr->response);
+		what_ptr = what_ptr->next;
 	}
 
-	// Save "where" intent's entitiy-responses.
+	// Save the entity and responses for 'where' intent.
 	fprintf(f, "\n[where]\n");
-	while (where != NULL) {
-		fprintf(f, "%s=%s\n", where->entity, where->response);
-		where = where->next;
+	while (where_ptr != NULL) {
+		fprintf(f, "%s=%s\n", where_ptr->entity, where_ptr->response);
+		where_ptr = where_ptr->next;
 	}
 
-	// Save "what" intent's entitiy-responses.
+	// Save the entity and responses for 'who' intent.
 	fprintf(f, "\n[who]\n");
-	while (who != NULL) {
-		fprintf(f, "%s=%s\n", who->entity, who->response);
-		who = who->next;
+	while (who_ptr != NULL) {
+		fprintf(f, "%s=%s\n", who_ptr->entity, who_ptr->response);
+		who_ptr = who_ptr->next;
 	}
 }
