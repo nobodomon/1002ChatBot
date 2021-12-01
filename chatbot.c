@@ -470,28 +470,77 @@ int chatbot_do_save(int inc, char* inv[], char* response, int n) {
 	char format[5] = ".ini";
 	format[strlen(format)] = '\0';
 
-	// Get the file path from the user input.
-	if (compare_token(inv[1], "to") == 0 || compare_token(inv[1], "as") == 0) {
-		// Save[0] to[1] /file.txt[2] or Save[0] as[1] /file.txt[2]
+	if (inv[1] == NULL) {
+		// If the save statement has 1 word. If file not stated, prompt user for filename.
+
+		// SAVE[0]
+		char tempFilePath[MAX_INPUT] = "";
+		printf("%s: What file would you like to save to?\n", chatbot_botname());
+		printf("%s:", chatbot_username());
+		fgets(tempFilePath, MAX_INPUT, stdin);
+		tempFilePath[strlen(tempFilePath) - 1] = '\0';
 
 		// If user did not indicate file type, set it as a '.ini'.
-		if ((point = strrchr(inv[2], '.')) == NULL) {
-			strcat(inv[2], format);
+		if ((point = strrchr(tempFilePath, '.')) == NULL) {
+			strcat(tempFilePath, format);
 		}
 
-		strncpy(file_path, inv[2], strlen(inv[2]));
-		file_path[strlen(inv[2])] = 0;
+		strncpy(file_path, tempFilePath, strlen(tempFilePath));
+		file_path[strlen(tempFilePath)] = 0;
+	}
+	else if (inv[2] == NULL) {
+		// If the save statement has 2 words. If file not stated, prompt user for filename.
+
+		if (compare_token(inv[1], "to") == 0 || compare_token(inv[1], "as") == 0) {
+			// SAVE[0] as[1]	or	SAVE[0] to[1]
+			char tempFilePath[MAX_INPUT] = "";
+			printf("%s: What file would you like to save to?\n", chatbot_botname());
+			printf("%s:", chatbot_username());
+			fgets(tempFilePath, MAX_INPUT, stdin);
+			tempFilePath[strlen(tempFilePath) - 1] = '\0';
+
+			// If user did not indicate file type, set it as a '.ini'.
+			if ((point = strrchr(tempFilePath, '.')) == NULL) {
+				strcat(tempFilePath, format);
+			}
+
+			strncpy(file_path, tempFilePath, strlen(tempFilePath));
+			file_path[strlen(tempFilePath)] = 0;
+		}
+		else {
+			// If user did not indicate file type, set it as a '.ini'.
+			if ((point = strrchr(inv[1], '.')) == NULL) {
+				strcat(inv[1], format);
+			}
+
+			strncpy(file_path, inv[1], strlen(inv[1]));
+			file_path[strlen(inv[1])] = 0;
+		}
+	}
+	else if (inv[3] == NULL) {
+		// If the save statement has 3 words. If file not stated, prompt user for filename.
+
+		if (compare_token(inv[1], "to") == 0 || compare_token(inv[1], "as") == 0) {
+			// Save[0] to[1] /file.txt[2] or Save[0] as[1] /file.txt[2]
+
+			// If user did not indicate file type, set it as a '.ini'.
+			if ((point = strrchr(inv[2], '.')) == NULL) {
+				strcat(inv[2], format);
+			}
+
+			strncpy(file_path, inv[2], strlen(inv[2]));
+			file_path[strlen(inv[2])] = 0;
+		}
+		else {
+			snprintf(response, n, "I have trouble understanding your statement, can you please repeat?");
+
+			return 0;
+		}
 	}
 	else {
-		// Save[0] /file.txt[1]
+		snprintf(response, n, "I have trouble understanding your statement, can you please repeat?");
 
-		// If user did not indicate file type, set it as a '.ini'.
-		if ((point = strrchr(inv[1], '.')) == NULL) {
-			strcat(inv[1], format);
-		}
-
-		strncpy(file_path, inv[1], strlen(inv[1]));
-		file_path[strlen(inv[1])] = 0;
+		return 0;
 	}
 
 	//Open file in read mode to check if it exists.
