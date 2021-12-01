@@ -98,14 +98,12 @@ int knowledge_put(const char* intent, const char* entity, const char* response) 
  */
 int knowledge_read(FILE* f) {
 
-	//	int linesRead			= a counter for number of lines read
-	//	char line[MAX_INPUT]	= the line that will be read from file
-	//	char* intent			= which header to be set.
-	//	int result				= the results from knowledge_update()
+	//	int linesRead				= a counter for number of lines read
+	//	char fileLines[MAX_INPUT]	= the line that will be read from file
+	//	char* intent				= which header to be set.
 	int linesRead = 0;
-	char fileLines[MAX_INPUT];
 	char* intent = NULL;
-	int result;
+	char fileLines[MAX_INPUT];
 
 	while (!feof(f)) {
 		if (ferror(f)) {
@@ -116,38 +114,21 @@ int knowledge_read(FILE* f) {
 		}
 
 		while (fgets(fileLines, MAX_RESPONSE, f)) {
-			char* entity, * response, * carriageReturn, * newLine;
+			char* entity, * response, * newLine;
 
 			//Check if the line is empty
-			if (strcmp(fileLines, "\r\n") == 0 || strcmp(fileLines, "\n") == 0) {
-				//skip to next line
-				continue;
-			}
-			else {
-				//Check if carriage return is in line.
-				carriageReturn = strchr(fileLines, '\r');
+			if (strcmp(fileLines, "\n") != 0) {
+
 				//Check if newline character is in line.
 				newLine = strchr(fileLines, '\n');
 
-				if (carriageReturn != NULL) {
-					// Replace carriage return character with null terminator.
-					*carriageReturn = '\0';
-				}
-				else if (newLine != NULL) {
+				if (newLine != NULL) {
 					// Replace new line character with null terminator.
 					*newLine = '\0';
 				}
-				else {
-					//getchar to clear stdin if line exceeds MAX_RESPONSE
-					int c;
-					do {
-						c = getchar();
-						continue;
-					} while (c != '\n' && c != EOF);
-				}
 
 				//If square brackets are found, intent is found.
-				if (strchr(fileLines, '[') != NULL && strchr(fileLines, ']') != NULL) {
+				if (strcmp(fileLines, "[what]") || strcmp(fileLines, "[where]") || strcmp(fileLines, "[who]")) {
 					// Check the intent of the line with braces.
 					switch (detectIntent(fileLines, 1)) {
 					case 1:
@@ -159,22 +140,28 @@ int knowledge_read(FILE* f) {
 					case 3:
 						intent = "who";
 						break;
-					default:
-						intent = NULL;
-						break;
 					}
-				}
-				//after square brackets line, knowledge will be in next line.
-				else if ((intent != NULL) && (strchr(fileLines, '=') != NULL)) {
-					// Entity-Response pair line.
-					entity = strtok(fileLines, "=");
-					response = strtok(NULL, "=");
-					//put the knowledge from file into lined list.
-					result = knowledge_put(intent, entity, response);
 
-					if (result == KB_OK) {
-						// Increment the successful counter.
-						linesRead++;
+					// Loops until every line under the intent is read
+					while (!feof(f)) {
+						fgets(fileLines, MAX_RESPONSE, f);
+
+						if (strcmp(fileLines, "\n") == 0 || feof(f)) {
+							break;
+						}
+
+						newLine = strchr(fileLines, '\n');
+						if (newLine != NULL) {
+								*newLine = '\0';
+						}
+
+						entity = strtok(fileLines, "=");
+						response = strtok(NULL, "=");
+
+						//put the knowledge from file into linked list.
+						if (knowledge_put(intent, entity, response) == KB_OK) {
+							linesRead++;
+						}
 					}
 				}
 			}
@@ -210,26 +197,38 @@ void knowledge_write(FILE* f) {
 	node_ptr what_ptr = what_header;
 	node_ptr where_ptr = where_header;
 	node_ptr who_ptr = who_header;
+	int i = 0;
 
-	// Save the entity and responses for 'what' intent.
+	// Save the entity and responses for the three intents.
+
 	fprintf(f, "[what]\n");
-	while (what_ptr != NULL) {
+	while (i == 0) {
 		fprintf(f, "%s=%s\n", what_ptr->entity, what_ptr->response);
 		what_ptr = what_ptr->next;
+
+		if (what_ptr == NULL) {
+			break;
+		}
 	}
 
-	// Save the entity and responses for 'where' intent.
 	fprintf(f, "\n[where]\n");
-	while (where_ptr != NULL) {
+	while (i == 0) {
 		fprintf(f, "%s=%s\n", where_ptr->entity, where_ptr->response);
 		where_ptr = where_ptr->next;
+
+		if (where_ptr == NULL) {
+			break;
+		}
 	}
 
-	// Save the entity and responses for 'who' intent.
 	fprintf(f, "\n[who]\n");
-	while (who_ptr != NULL) {
+	while (i == 0) {
 		fprintf(f, "%s=%s\n", who_ptr->entity, who_ptr->response);
 		who_ptr = who_ptr->next;
+
+		if (who_ptr == NULL) {
+			break;
+		}
 	}
 }
 
