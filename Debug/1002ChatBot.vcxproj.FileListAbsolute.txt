@@ -1,2 +1,1 @@
-D:\ICT1002_Group Project Assignment_Skeleton\1002ChatBot\Debug\1002ChatBot.exe
-C:\Users\Soh Wen Yue\source\repos\1002ChatBot\Debug\1002ChatBot.exe
+C:\Users\Soh Wen Yue\source\repos\1002ChatBot2\Debug\1002ChatBot.exe

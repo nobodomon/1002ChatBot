@@ -1,6 +1,0 @@
-[what]
-sit=my house
-
-[where]
-
-[who]
