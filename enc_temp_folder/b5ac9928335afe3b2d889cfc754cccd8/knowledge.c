@@ -201,38 +201,26 @@ void knowledge_write(FILE* f) {
 
 	// Save the entity and responses for the three intents.
 
-	fprintf(f, "[what]");
-	while (i == 0) {
+	fprintf(f, "[what]\n");
+	while (what_ptr != NULL) {
 		fprintf(f, "%s=%s\n", what_ptr->entity, what_ptr->response);
 		what_ptr = what_ptr->next;
-
-		if (what_ptr == NULL) {
-			fprintf(f, "\n");
-			break;
-		}
 	}
 
-	fprintf(f, "[where]\n");
-	while (i == 0) {
+	fprintf(f, "\n[where]\n");
+	while (where_ptr != NULL) {
 		fprintf(f, "%s=%s\n", where_ptr->entity, where_ptr->response);
 		where_ptr = where_ptr->next;
 
-		if (where_ptr == NULL) {
-			fprintf(f, "\n");
-			break;
-		}
 	}
 	
-	fprintf(f, "[who]\n");
-	while (i == 0) {
+	fprintf(f, "\n[who]\n");
+	while (who_ptr != NULL) {
 		fprintf(f, "%s=%s\n", who_ptr->entity, who_ptr->response);
 		who_ptr = who_ptr->next;
-
-		if (who_ptr == NULL) {
-			fprintf(f, "\n");
-			break;
-		}
 	}
+	fprintf(f, "\n");
+
 }
 
 /*

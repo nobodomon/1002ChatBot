@@ -44,9 +44,8 @@ typedef struct node {
 	char response[MAX_RESPONSE];
 
 	struct node* next;
-} entRespNode;
+} entRespNode, *node_ptr;
 
-typedef entRespNode* node_ptr;
 
 /* Head for the linked lists */
 node_ptr what_header;
